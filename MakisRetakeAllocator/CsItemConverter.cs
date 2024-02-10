@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Text.Json;
 
 public class CsItemConverter : ValueConverter<CsItem?, string> {
+
     public CsItemConverter() : base(
         aCsItem => CsItemSerializer(aCsItem),
         aString => CsItemDeserializer(aString)

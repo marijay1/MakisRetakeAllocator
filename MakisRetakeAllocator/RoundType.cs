@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MakisRetakeAllocator.Enums;
-public enum RoundTypeEnum {
+namespace MakisRetakeAllocator;
+
+public enum RoundType {
     Pistol,
     FullBuy
 }
-

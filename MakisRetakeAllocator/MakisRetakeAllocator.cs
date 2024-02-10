@@ -3,13 +3,11 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes;
 using CounterStrikeSharp.API.Modules.Utils;
 using MakisRetakeAllocator.Configs;
-using static CounterStrikeSharp.API.Core.Listeners;
 
 namespace MakisRetakeAllocator;
 
 [MinimumApiVersion(159)]
 public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfig> {
-
     private const string Version = "0.0.1";
 
     public override string ModuleName => "Maki's Retake Allocator";
@@ -23,7 +21,6 @@ public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfi
     public MakisConfig Config { get; set; } = null!;
 
     public MakisRetakeAllocator() {
-
     }
 
     public void OnConfigParsed(MakisConfig aMakiConfig) {
