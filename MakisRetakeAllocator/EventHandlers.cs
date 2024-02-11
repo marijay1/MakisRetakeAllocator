@@ -14,4 +14,9 @@ public partial class EventHandlers {
     public HookResult OnPlayerSpawn(EventPlayerSpawn @event, GameEventInfo anInfo) {
         return HookResult.Continue;
     }
+
+    [GameEventHandler]
+    public HookResult onPlayerFullConnect(EventPlayerSpawn @event, GameEventInfo anInfo) {
+        return HookResult.Continue;
+    }
 }

@@ -1,25 +1,41 @@
-﻿using CounterStrikeSharp.API.Modules.Entities.Constants;
-using CounterStrikeSharp.API.Modules.Utils;
-using static MakisRetakeAllocator.Loadouts.LoadoutFactory;
+﻿namespace MakisRetakeAllocator.Loadouts;
 
-namespace MakisRetakeAllocator.Loadouts;
-
-public record PlayerLoadout {
+public class PlayerLoadout {
     private readonly int theUserId;
-    private Dictionary<RoundType, Dictionary<CsTeam, List<CsItem>>> theLoadouts;
+    private Dictionary<RoundType, PlayerItems> theCounterTerroristLoadouts;
+    private Dictionary<RoundType, PlayerItems> theTerroristLoadouts;
 
-    public PlayerLoadout(int anUserId, Dictionary<RoundType, Dictionary<CsTeam, List<CsItem>>>? aLoadouts) {
+    public PlayerLoadout(int anUserId, Dictionary<RoundType, PlayerItems>? aCounterTerroristLoadouts, Dictionary<RoundType, PlayerItems>? aTerroristLoadouts) {
         theUserId = anUserId;
-        theLoadouts = aLoadouts ?? CreateDefaultLoadouts();
+        theCounterTerroristLoadouts = aCounterTerroristLoadouts ?? new Dictionary<RoundType, PlayerItems>();
+        theTerroristLoadouts = aTerroristLoadouts ?? new Dictionary<RoundType, PlayerItems>();
     }
 
-    public List<CsItem> getLoadout(RoundType aRoundType, CsTeam aTeam) {
-        if (theLoadouts.TryGetValue(aRoundType, out var myTeamLoadouts)) {
-            if (myTeamLoadouts.TryGetValue(aTeam, out var myLoadout)) {
-                return myLoadout;
-            }
-        }
+    public int getUserId() {
+        return theUserId;
+    }
 
-        return new List<CsItem>();
+    public Dictionary<RoundType, PlayerItems> getCounterTerroristLoadouts() {
+        return theCounterTerroristLoadouts;
+    }
+
+    public Dictionary<RoundType, PlayerItems> getTerroristLoadouts() {
+        return theTerroristLoadouts;
+    }
+
+    public class PlayerItems {
+        public LoadoutItems.PrimaryWeapon? thePrimaryWeapon;
+        public LoadoutItems.SecondaryWeapon theSecondaryWeapon;
+        public LoadoutItems.Armor theArmor;
+        public List<LoadoutItems.Grenade>? theGrenades;
+        public bool theIsKitEnabled;
+
+        public PlayerItems(LoadoutItems.PrimaryWeapon? aPrimaryWeapon, LoadoutItems.SecondaryWeapon aSecondaryWeapon, LoadoutItems.Armor aArmor, List<LoadoutItems.Grenade> aGrenades, bool anIsKitEnabled) {
+            thePrimaryWeapon = aPrimaryWeapon;
+            theSecondaryWeapon = aSecondaryWeapon;
+            theArmor = aArmor;
+            theGrenades = aGrenades ?? new List<LoadoutItems.Grenade>();
+            theIsKitEnabled = anIsKitEnabled;
+        }
     }
 }

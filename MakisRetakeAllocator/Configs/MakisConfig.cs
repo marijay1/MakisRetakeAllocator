@@ -4,5 +4,7 @@ using System.Text.Json.Serialization;
 namespace MakisRetakeAllocator.Configs;
 
 public class MakisConfig : BasePluginConfig {
-    [JsonPropertyName("Number of Pistol rounds")] public int myNumPistolRounds { get; set; } = 5;
+    [JsonPropertyName("Number of Pistol rounds")] public int theNumPistolRounds { get; set; } = 5;
+    [JsonPropertyName("Starting money")] public int theStartingMoney { get; set; } = 4850;
+    [JsonPropertyName("Seconds until menu timeout")] public int theSecondsUntilMenuTimeout { get; set; } = 30;
 }

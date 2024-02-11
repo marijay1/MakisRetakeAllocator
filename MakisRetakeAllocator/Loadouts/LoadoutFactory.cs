@@ -1,69 +1,58 @@
-﻿using CounterStrikeSharp.API.Modules.Entities.Constants;
+﻿using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Utils;
+using static MakisRetakeAllocator.Loadouts.PlayerLoadout;
 
 namespace MakisRetakeAllocator.Loadouts;
 
 public class LoadoutFactory {
 
-    public static Dictionary<RoundType, Dictionary<CsTeam, List<CsItem>>> CreateDefaultLoadouts() {
-        Dictionary<RoundType, Dictionary<CsTeam, List<CsItem>>> myDefaultLoadouts = new Dictionary<RoundType, Dictionary<CsTeam, List<CsItem>>>();
+    public static PlayerLoadout CreateDefaultLoadout(CCSPlayerController aPlayer) {
+        PlayerLoadout myPlayerLoadout = new PlayerLoadout((int)aPlayer.UserId!, null, null);
 
-        myDefaultLoadouts.Add(RoundType.Pistol, new Dictionary<CsTeam, List<CsItem>>());
-        myDefaultLoadouts.Add(RoundType.FullBuy, new Dictionary<CsTeam, List<CsItem>>());
+        Dictionary<RoundType, PlayerItems> myCounterTerroristLoadout = myPlayerLoadout.getCounterTerroristLoadouts();
+        Dictionary<RoundType, PlayerItems> myTerroristLoadout = myPlayerLoadout.getTerroristLoadouts();
 
-        foreach (RoundType aRoundType in Enum.GetValues(typeof(RoundType))) {
-            (List<CsItem> aTerroristLoadout, List<CsItem> aCounterTerroristLoadout) = PopulateDefaultloadouts(aRoundType);
-            myDefaultLoadouts[aRoundType].Add(CsTeam.Terrorist, aTerroristLoadout);
-            myDefaultLoadouts[aRoundType].Add(CsTeam.CounterTerrorist, aCounterTerroristLoadout);
-        }
+        myCounterTerroristLoadout.Add(RoundType.Pistol, new PlayerItems(
+            null,
+            (LoadoutItems.SecondaryWeapon)getLoadoutItem(CsItem.USP),
+            (LoadoutItems.Armor)getLoadoutItem(CsItem.Kevlar),
+            new List<LoadoutItems.Grenade>(),
+            false
+            ));
 
-        return myDefaultLoadouts;
+        myCounterTerroristLoadout.Add(RoundType.FullBuy, new PlayerItems(
+            (LoadoutItems.PrimaryWeapon)getLoadoutItem(CsItem.M4A1S),
+            (LoadoutItems.SecondaryWeapon)getLoadoutItem(CsItem.USP),
+            (LoadoutItems.Armor)getLoadoutItem(CsItem.KevlarHelmet),
+            new List<LoadoutItems.Grenade>(),
+            true
+            ));
+
+        myTerroristLoadout.Add(RoundType.Pistol, new PlayerItems(
+            null,
+            (LoadoutItems.SecondaryWeapon)getLoadoutItem(CsItem.Glock),
+            (LoadoutItems.Armor)getLoadoutItem(CsItem.Kevlar),
+            new List<LoadoutItems.Grenade>(),
+            false
+            ));
+
+        myTerroristLoadout.Add(RoundType.Pistol, new PlayerItems(
+            (LoadoutItems.PrimaryWeapon)getLoadoutItem(CsItem.AK47),
+            (LoadoutItems.SecondaryWeapon)getLoadoutItem(CsItem.Glock),
+            (LoadoutItems.Armor)getLoadoutItem(CsItem.KevlarHelmet),
+            new List<LoadoutItems.Grenade>(),
+            false
+            ));
+
+        return new PlayerLoadout((int)aPlayer.UserId!, myCounterTerroristLoadout, myTerroristLoadout);
     }
 
-    private static (List<CsItem> aTerroristLoadout, List<CsItem> aCounterTerroristLoadout) PopulateDefaultloadouts(RoundType aRoundType) {
-        List<CsItem> myTLoadout = new List<CsItem>();
-        List<CsItem> myCTLoadout = new List<CsItem>();
-
-        switch (aRoundType) {
-            case RoundType.Pistol:
-                myTLoadout.AddRange(new List<CsItem> {
-                                CsItem.Glock,
-                                CsItem.Kevlar
-                });
-
-                myCTLoadout.AddRange(new List<CsItem> {
-                                CsItem.USP,
-                                CsItem.Kevlar
-                });
-                break;
-
-            case RoundType.FullBuy:
-                myTLoadout.AddRange(new List<CsItem> {
-                                CsItem.AK47,
-                                CsItem.Glock,
-                                CsItem.KevlarHelmet,
-                                CsItem.Flashbang
-                                //TODO add a dynamic way of generating grenades based on player preference, but also max # per nade
-                });
-
-                myCTLoadout.AddRange(new List<CsItem> {
-                                CsItem.M4A1S,
-                                CsItem.Glock,
-                                CsItem.KevlarHelmet,
-                                CsItem.Flashbang
-                                //TODO add a dynamic way of generating grenades based on player preference, but also max # per nade
-                });
-                break;
-
-            default:
-                //Why would this ever happen??
-                break;
-        }
-
-        return (myTLoadout, myCTLoadout);
+    public static LoadoutItem getLoadoutItem(CsItem aCsItem) {
+        return LOADOUT_ITEMS.FirstOrDefault(aWeapon => aWeapon.theItem.Equals(aCsItem))!;
     }
 
-    public static HashSet<LoadoutItem> LOADOUT_ITEMS { get; } = new HashSet<LoadoutItem>() {
+    public static List<LoadoutItem> LOADOUT_ITEMS { get; } = new List<LoadoutItem>() {
         //Primarys
         //Snipers
         new LoadoutItems.PrimaryWeapon("Scout", 1700, CsItem.SSG08, ItemType.Sniper, CsTeam.None),
