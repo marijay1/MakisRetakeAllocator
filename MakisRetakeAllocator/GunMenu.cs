@@ -11,8 +11,11 @@ public class GunMenu {
     private int theMoneyAvailable = -1;
     private CsTeam theTeam;
 
-    public GunMenu(CsTeam aTeam) {
+    private LoadoutFactory theLoadoutFactory;
+
+    public GunMenu(LoadoutFactory aLoadoutFactory, CsTeam aTeam) {
         theTeam = aTeam;
+        theLoadoutFactory = aLoadoutFactory;
     }
 
     public void openMenu() {
@@ -73,7 +76,7 @@ public class GunMenu {
 
     private void openPrimaryMenu() {
         ChatMenu myChatMenu = new ChatMenu("Select your Primary:");
-        foreach (LoadoutItems.PrimaryWeapon myWeapon in LoadoutFactory.LOADOUT_ITEMS.Where(aWeapon => aWeapon.theCsTeam == theTeam)) {
+        foreach (LoadoutItem myWeapon in theLoadoutFactory.LOADOUT_ITEMS.Where(aWeapon => aWeapon.theCsTeam == theTeam)) {
             //TODO
         }
     }

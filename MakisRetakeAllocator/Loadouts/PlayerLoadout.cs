@@ -1,18 +1,18 @@
 ﻿namespace MakisRetakeAllocator.Loadouts;
 
 public class PlayerLoadout {
-    private readonly int theUserId;
+    private readonly int theSteamId;
     private Dictionary<RoundType, PlayerItems> theCounterTerroristLoadouts;
     private Dictionary<RoundType, PlayerItems> theTerroristLoadouts;
 
-    public PlayerLoadout(int anUserId, Dictionary<RoundType, PlayerItems>? aCounterTerroristLoadouts, Dictionary<RoundType, PlayerItems>? aTerroristLoadouts) {
-        theUserId = anUserId;
+    public PlayerLoadout(int aSteamId, Dictionary<RoundType, PlayerItems>? aCounterTerroristLoadouts, Dictionary<RoundType, PlayerItems>? aTerroristLoadouts) {
+        theSteamId = aSteamId;
         theCounterTerroristLoadouts = aCounterTerroristLoadouts ?? new Dictionary<RoundType, PlayerItems>();
         theTerroristLoadouts = aTerroristLoadouts ?? new Dictionary<RoundType, PlayerItems>();
     }
 
-    public int getUserId() {
-        return theUserId;
+    public int getSteamId() {
+        return theSteamId;
     }
 
     public Dictionary<RoundType, PlayerItems> getCounterTerroristLoadouts() {
@@ -23,19 +23,19 @@ public class PlayerLoadout {
         return theTerroristLoadouts;
     }
 
-    public class PlayerItems {
-        public LoadoutItems.PrimaryWeapon? thePrimaryWeapon;
-        public LoadoutItems.SecondaryWeapon theSecondaryWeapon;
-        public LoadoutItems.Armor theArmor;
-        public List<LoadoutItems.Grenade>? theGrenades;
-        public bool theIsKitEnabled;
+    public record PlayerItems {
+        public LoadoutItem? thePrimaryWeapon { get; set; }
+        public LoadoutItem theSecondaryWeapon { get; set; }
+        public LoadoutItem theArmor { get; set; }
+        public LoadoutItem theGrenadePreference { get; set; }
+        public bool? theIsKitEnabled { get; set; }
 
-        public PlayerItems(LoadoutItems.PrimaryWeapon? aPrimaryWeapon, LoadoutItems.SecondaryWeapon aSecondaryWeapon, LoadoutItems.Armor aArmor, List<LoadoutItems.Grenade> aGrenades, bool anIsKitEnabled) {
+        public PlayerItems(LoadoutItem? aPrimaryWeapon, LoadoutItem aSecondaryWeapon, LoadoutItem aArmor, LoadoutItem aGrenadePreference, bool? anIsKitEnabled) {
             thePrimaryWeapon = aPrimaryWeapon;
             theSecondaryWeapon = aSecondaryWeapon;
             theArmor = aArmor;
-            theGrenades = aGrenades ?? new List<LoadoutItems.Grenade>();
-            theIsKitEnabled = anIsKitEnabled;
+            theGrenadePreference = aGrenadePreference;
+            theIsKitEnabled = anIsKitEnabled ?? false;
         }
     }
 }
