@@ -6,7 +6,7 @@ using MakisRetakeAllocator.Configs;
 
 namespace MakisRetakeAllocator;
 
-[MinimumApiVersion(159)]
+[MinimumApiVersion(166)]
 public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfig> {
     private const string Version = "0.0.1";
 

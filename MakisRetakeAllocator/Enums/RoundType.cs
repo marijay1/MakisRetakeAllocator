@@ -1,4 +1,4 @@
-﻿namespace MakisRetakeAllocator;
+﻿namespace MakisRetakeAllocator.Enums;
 
 public enum RoundType {
     Pistol,

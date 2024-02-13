@@ -1,4 +1,6 @@
-﻿namespace MakisRetakeAllocator.Loadouts;
+﻿using MakisRetakeAllocator.Enums;
+
+namespace MakisRetakeAllocator.Loadouts;
 
 public class PlayerLoadout {
     private readonly int theSteamId;

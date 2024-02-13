@@ -1,7 +1,7 @@
 ﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Utils;
-using static MakisRetakeAllocator.Loadouts.LoadoutItem;
+using MakisRetakeAllocator.Enums;
 using static MakisRetakeAllocator.Loadouts.PlayerLoadout;
 
 namespace MakisRetakeAllocator.Loadouts;

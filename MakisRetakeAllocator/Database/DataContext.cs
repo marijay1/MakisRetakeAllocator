@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using MakisRetakeAllocator.Enums;
 using MakisRetakeAllocator.Loadouts;
 
 using Microsoft.Extensions.Options;

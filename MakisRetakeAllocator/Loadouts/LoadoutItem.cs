@@ -1,5 +1,6 @@
 ﻿using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Utils;
+using MakisRetakeAllocator.Enums;
 
 namespace MakisRetakeAllocator.Loadouts;
 
@@ -16,15 +17,5 @@ public class LoadoutItem {
         theItem = anItem;
         theItemType = anItemType;
         theCsTeam = aCsTeam;
-    }
-
-    public enum ItemType {
-        Sniper,
-        Rifle,
-        SMG,
-        Heavy,
-        Pistol,
-        Armor,
-        Grenade
     }
 }
