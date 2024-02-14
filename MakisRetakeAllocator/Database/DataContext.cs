@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using CounterStrikeSharp.API.Modules.Utils;
+using Dapper;
 using MakisRetakeAllocator.Enums;
 using MakisRetakeAllocator.Loadouts;
 
@@ -32,13 +33,13 @@ public class DataContext {
 
         using (MySqlCommand myCommand = new MySqlCommand(myPistolSql, aConnection)) {
             myCommand.Parameters.AddWithValue("@SteamId", aPlayerLoadout.getSteamId());
-            myCommand.Parameters.AddWithValue("@CTSeconday", aPlayerLoadout.getCounterTerroristLoadouts()[RoundType.Pistol].theSecondaryWeapon);
-            myCommand.Parameters.AddWithValue("@CTArmor", aPlayerLoadout.getCounterTerroristLoadouts()[RoundType.Pistol].theArmor);
-            myCommand.Parameters.AddWithValue("@CTGrenade", aPlayerLoadout.getCounterTerroristLoadouts()[RoundType.Pistol].theGrenadePreference);
-            myCommand.Parameters.AddWithValue("@CTKit", aPlayerLoadout.getCounterTerroristLoadouts()[RoundType.Pistol].theIsKitEnabled);
-            myCommand.Parameters.AddWithValue("@TSecondary", aPlayerLoadout.getTerroristLoadouts()[RoundType.Pistol].theSecondaryWeapon);
-            myCommand.Parameters.AddWithValue("@TArmor", aPlayerLoadout.getTerroristLoadouts()[RoundType.Pistol].theArmor);
-            myCommand.Parameters.AddWithValue("@TGrenade", aPlayerLoadout.getTerroristLoadouts()[RoundType.Pistol].theGrenadePreference);
+            myCommand.Parameters.AddWithValue("@CTSeconday", aPlayerLoadout.getLoadouts(CsTeam.CounterTerrorist)[RoundType.Pistol].theSecondaryWeapon);
+            myCommand.Parameters.AddWithValue("@CTArmor", aPlayerLoadout.getLoadouts(CsTeam.CounterTerrorist)[RoundType.Pistol].theArmor);
+            myCommand.Parameters.AddWithValue("@CTGrenade", aPlayerLoadout.getLoadouts(CsTeam.CounterTerrorist)[RoundType.Pistol].theGrenadePreference);
+            myCommand.Parameters.AddWithValue("@CTKit", aPlayerLoadout.getLoadouts(CsTeam.CounterTerrorist)[RoundType.Pistol].theIsKitEnabled);
+            myCommand.Parameters.AddWithValue("@TSecondary", aPlayerLoadout.getLoadouts(CsTeam.Terrorist)[RoundType.Pistol].theSecondaryWeapon);
+            myCommand.Parameters.AddWithValue("@TArmor", aPlayerLoadout.getLoadouts(CsTeam.Terrorist)[RoundType.Pistol].theArmor);
+            myCommand.Parameters.AddWithValue("@TGrenade", aPlayerLoadout.getLoadouts(CsTeam.Terrorist)[RoundType.Pistol].theGrenadePreference);
 
             await myCommand.ExecuteNonQueryAsync();
         }
@@ -51,15 +52,15 @@ public class DataContext {
 
         using (MySqlCommand myCommand = new MySqlCommand(myFullbuySql, aConnection)) {
             myCommand.Parameters.AddWithValue("@SteamId", aPlayerLoadout.getSteamId());
-            myCommand.Parameters.AddWithValue("@CTPrimary", aPlayerLoadout.getCounterTerroristLoadouts()[RoundType.FullBuy].thePrimaryWeapon);
-            myCommand.Parameters.AddWithValue("@CTSecondary", aPlayerLoadout.getCounterTerroristLoadouts()[RoundType.FullBuy].theSecondaryWeapon);
-            myCommand.Parameters.AddWithValue("@CTArmor", aPlayerLoadout.getCounterTerroristLoadouts()[RoundType.FullBuy].theArmor);
-            myCommand.Parameters.AddWithValue("@CTGrenade", aPlayerLoadout.getCounterTerroristLoadouts()[RoundType.FullBuy].theGrenadePreference);
-            myCommand.Parameters.AddWithValue("@CTKit", aPlayerLoadout.getCounterTerroristLoadouts()[RoundType.FullBuy].theIsKitEnabled);
-            myCommand.Parameters.AddWithValue("@TPrimary", aPlayerLoadout.getTerroristLoadouts()[RoundType.FullBuy].thePrimaryWeapon);
-            myCommand.Parameters.AddWithValue("@TSecondary", aPlayerLoadout.getTerroristLoadouts()[RoundType.FullBuy].theSecondaryWeapon);
-            myCommand.Parameters.AddWithValue("@TArmor", aPlayerLoadout.getTerroristLoadouts()[RoundType.FullBuy].theArmor);
-            myCommand.Parameters.AddWithValue("@TGrenade", aPlayerLoadout.getTerroristLoadouts()[RoundType.FullBuy].theGrenadePreference);
+            myCommand.Parameters.AddWithValue("@CTPrimary", aPlayerLoadout.getLoadouts(CsTeam.CounterTerrorist)[RoundType.FullBuy].thePrimaryWeapon);
+            myCommand.Parameters.AddWithValue("@CTSecondary", aPlayerLoadout.getLoadouts(CsTeam.CounterTerrorist)[RoundType.FullBuy].theSecondaryWeapon);
+            myCommand.Parameters.AddWithValue("@CTArmor", aPlayerLoadout.getLoadouts(CsTeam.CounterTerrorist)[RoundType.FullBuy].theArmor);
+            myCommand.Parameters.AddWithValue("@CTGrenade", aPlayerLoadout.getLoadouts(CsTeam.CounterTerrorist)[RoundType.FullBuy].theGrenadePreference);
+            myCommand.Parameters.AddWithValue("@CTKit", aPlayerLoadout.getLoadouts(CsTeam.CounterTerrorist)[RoundType.FullBuy].theIsKitEnabled);
+            myCommand.Parameters.AddWithValue("@TPrimary", aPlayerLoadout.getLoadouts(CsTeam.Terrorist)[RoundType.FullBuy].thePrimaryWeapon);
+            myCommand.Parameters.AddWithValue("@TSecondary", aPlayerLoadout.getLoadouts(CsTeam.Terrorist)[RoundType.FullBuy].theSecondaryWeapon);
+            myCommand.Parameters.AddWithValue("@TArmor", aPlayerLoadout.getLoadouts(CsTeam.Terrorist)[RoundType.FullBuy].theArmor);
+            myCommand.Parameters.AddWithValue("@TGrenade", aPlayerLoadout.getLoadouts(CsTeam.Terrorist)[RoundType.FullBuy].theGrenadePreference);
 
             await myCommand.ExecuteNonQueryAsync();
         }
@@ -104,6 +105,7 @@ public class DataContext {
     }
 
     private PlayerItems createPlayerItems(MySqlDataReader aSqlReader, string aFieldPrefix) {
+        //TODO
         return new PlayerItems(
             getLoadoutItem(aSqlReader, $"{aFieldPrefix}_primary"),
             getLoadoutItem(aSqlReader, $"{aFieldPrefix}_secondary"),

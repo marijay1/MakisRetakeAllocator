@@ -7,11 +7,11 @@ namespace MakisRetakeAllocator.Loadouts;
 public class LoadoutItem {
     public string theName { get; }
     public int theCost { get; }
-    public CsItem theItem { get; }
+    public CsItem? theItem { get; }
     public ItemType theItemType { get; }
     public CsTeam theCsTeam { get; }
 
-    public LoadoutItem(string aName, int aCost, CsItem anItem, ItemType anItemType, CsTeam aCsTeam) {
+    public LoadoutItem(string aName, int aCost, CsItem? anItem, ItemType anItemType, CsTeam aCsTeam) {
         theName = aName;
         theCost = aCost;
         theItem = anItem;

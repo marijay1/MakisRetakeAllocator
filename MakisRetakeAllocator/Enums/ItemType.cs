@@ -1,11 +1,8 @@
 ﻿namespace MakisRetakeAllocator.Enums;
 
 public enum ItemType {
-    Sniper,
-    Rifle,
-    SMG,
-    Heavy,
-    Pistol,
+    Primary,
+    Secondary,
     Armor,
     Grenade
 }

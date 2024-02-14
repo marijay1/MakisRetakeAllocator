@@ -1,4 +1,5 @@
-﻿using MakisRetakeAllocator.Enums;
+﻿using CounterStrikeSharp.API.Modules.Utils;
+using MakisRetakeAllocator.Enums;
 
 namespace MakisRetakeAllocator.Loadouts;
 
@@ -17,11 +18,10 @@ public class PlayerLoadout {
         return theSteamId;
     }
 
-    public Dictionary<RoundType, PlayerItems> getCounterTerroristLoadouts() {
-        return theCounterTerroristLoadouts;
-    }
-
-    public Dictionary<RoundType, PlayerItems> getTerroristLoadouts() {
+    public Dictionary<RoundType, PlayerItems> getLoadouts(CsTeam aTeam) {
+        if (aTeam == CsTeam.CounterTerrorist) {
+            return theCounterTerroristLoadouts;
+        }
         return theTerroristLoadouts;
     }
 
@@ -29,10 +29,10 @@ public class PlayerLoadout {
         public LoadoutItem? thePrimaryWeapon { get; set; }
         public LoadoutItem theSecondaryWeapon { get; set; }
         public LoadoutItem theArmor { get; set; }
-        public LoadoutItem theGrenadePreference { get; set; }
+        public List<LoadoutItem> theGrenadePreference { get; set; }
         public bool? theIsKitEnabled { get; set; }
 
-        public PlayerItems(LoadoutItem? aPrimaryWeapon, LoadoutItem aSecondaryWeapon, LoadoutItem aArmor, LoadoutItem aGrenadePreference, bool? anIsKitEnabled) {
+        public PlayerItems(LoadoutItem? aPrimaryWeapon, LoadoutItem aSecondaryWeapon, LoadoutItem aArmor, List<LoadoutItem> aGrenadePreference, bool? anIsKitEnabled) {
             thePrimaryWeapon = aPrimaryWeapon;
             theSecondaryWeapon = aSecondaryWeapon;
             theArmor = aArmor;
