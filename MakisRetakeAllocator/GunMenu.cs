@@ -6,6 +6,7 @@ using MakisRetakeAllocator.Configs;
 using MakisRetakeAllocator.Enums;
 using MakisRetakeAllocator.Loadouts;
 using static MakisRetakeAllocator.Loadouts.PlayerLoadout;
+using static MakisRetakeAllocator.MakisRetakeAllocator;
 
 namespace MakisRetakeAllocator;
 
@@ -13,7 +14,6 @@ public class GunMenu {
     private static readonly int SECONDS_TO_TIMEOUT = 30;
 
     private int theCurrentMoney;
-    private CCSPlayerController thePlayer;
     private CsTeam theTeam;
     private RoundType? theRoundType;
 
@@ -21,21 +21,22 @@ public class GunMenu {
     private RetakesConfig theConfig;
 
     public GunMenu(CCSPlayerController aPlayer, CsTeam aTeam, LoadoutFactory aLoadoutFactory, MakisConfig aConfig) {
-        thePlayer = aPlayer;
         theTeam = aTeam;
         theLoadoutFactory = aLoadoutFactory;
         theConfig = aConfig.theRetakesConfig;
         theCurrentMoney = 0;
+
+        openMenu(aPlayer);
     }
 
-    private void updateMoney() {
+    private void updateMoney(CCSPlayerController aPlayer) {
         if (!theRoundType.HasValue) {
             throw new InvalidOperationException("Round type has not been selected.");
         }
 
         int myStartingMoney = theTeam == CsTeam.Terrorist ? theConfig.theTerroristStartingMoney : theConfig.theCounterTerroristStartingMoney;
 
-        PlayerItems myPlayerLoadout = thePlayer.getPlayerLoadout().getLoadouts(theTeam)[theRoundType.Value];
+        PlayerItems myPlayerLoadout = aPlayer.getPlayerLoadout().getLoadouts(theTeam)[theRoundType.Value];
 
         int myPrimaryCost = myPlayerLoadout.thePrimaryWeapon?.theCost ?? 0;
         int mySecondaryCost = myPlayerLoadout.theSecondaryWeapon.theCost;
@@ -45,39 +46,31 @@ public class GunMenu {
         int myPlayerLoadoutCost = myPrimaryCost + mySecondaryCost + myArmorCost + myGrenadeCost;
         int myFinalMoney = myStartingMoney - myPlayerLoadoutCost;
 
-        thePlayer.InGameMoneyServices!.Account = myFinalMoney;
+        aPlayer.InGameMoneyServices!.Account = myFinalMoney;
     }
 
-    public void openMenu() {
-        ChatMenu myChatMenu = new ChatMenu("Select your Round type:");
+    private void openMenu(CCSPlayerController aPlayer) {
+        CenterHtmlMenu myChatMenu = new CenterHtmlMenu("Select your Round type:");
 
         myChatMenu.AddMenuOption("Full Buy", onRoundTypeSelect);
         myChatMenu.AddMenuOption("Pistol", onRoundTypeSelect);
-        myChatMenu.AddMenuOption("", null, true);
-        myChatMenu.AddMenuOption("", null, true);
-        myChatMenu.AddMenuOption("", null, true);
-        myChatMenu.AddMenuOption("", null, true);
-        myChatMenu.AddMenuOption("", null, true);
-        myChatMenu.AddMenuOption("", null, true);
-        myChatMenu.AddMenuOption("", null, true);
-        myChatMenu.AddMenuOption("Exit", onMenuExit);
 
-        MenuManager.OpenChatMenu(thePlayer, myChatMenu);
+        MenuManager.OpenCenterHtmlMenu(thePlugin, aPlayer, myChatMenu);
     }
 
     private void onRoundTypeSelect(CCSPlayerController aPlayer, ChatMenuOption anOption) {
         string myItemTypeString = anOption.Text;
         switch (myItemTypeString) {
             case "Full Buy":
-                openItemTypeMenu();
                 theRoundType = RoundType.FullBuy;
-                updateMoney();
+                openItemTypeMenu(aPlayer);
+                updateMoney(aPlayer);
                 break;
 
             case "Pistol":
-                openItemTypeMenu();
                 theRoundType = RoundType.Pistol;
-                updateMoney();
+                openItemTypeMenu(aPlayer);
+                updateMoney(aPlayer);
                 break;
 
             default:
@@ -86,14 +79,14 @@ public class GunMenu {
         }
     }
 
-    public void openItemTypeMenu() {
+    public void openItemTypeMenu(CCSPlayerController aPlayer) {
         if (!theRoundType.HasValue) {
             throw new InvalidOperationException("Round type has not been selected.");
         }
 
-        string myKitIsEnabledString = thePlayer.getPlayerLoadout().getLoadouts(theTeam)[theRoundType.Value].theIsKitEnabled ? "Enabled" : "Disabled";
+        string myKitIsEnabledString = aPlayer.getPlayerLoadout().getLoadouts(theTeam)[theRoundType.Value].theIsKitEnabled ? "Enabled" : "Disabled";
 
-        ChatMenu myChatMenu = new ChatMenu("Select your Item type:");
+        CenterHtmlMenu myChatMenu = new CenterHtmlMenu("Select your Item type:");
 
         myChatMenu.AddMenuOption("Primary", onItemTypeSelect, theRoundType.Equals(RoundType.FullBuy) ? false : true);
 
@@ -103,18 +96,13 @@ public class GunMenu {
 
         myChatMenu.AddMenuOption($"Kit: {myKitIsEnabledString}", onItemTypeSelect, theTeam.Equals(CsTeam.CounterTerrorist) ? false : true);
 
-        myChatMenu.AddMenuOption("", null, true);
         myChatMenu.AddMenuOption("Randomize Loadout", onRandomizeSelect);
-        myChatMenu.AddMenuOption("", null, true);
-        myChatMenu.AddMenuOption("Back", onBackToBeginningSelect);
 
-        myChatMenu.AddMenuOption("Exit", onMenuExit);
-
-        MenuManager.OpenChatMenu(thePlayer, myChatMenu);
+        MenuManager.OpenCenterHtmlMenu(thePlugin, aPlayer, myChatMenu);
     }
 
     private void onBackToBeginningSelect(CCSPlayerController aPlayer, ChatMenuOption anOption) {
-        openMenu();
+        openMenu(aPlayer);
     }
 
     private void onRandomizeSelect(CCSPlayerController aPlayer, ChatMenuOption anOption) {
@@ -126,19 +114,19 @@ public class GunMenu {
 
         switch (myItemTypeString) {
             case "Primary":
-                openPrimaryMenu();
+                openPrimaryMenu(aPlayer);
                 break;
 
             case "Secondary":
-                openSecondaryMenu();
+                openSecondaryMenu(aPlayer);
                 break;
 
             case "Armor":
-                openArmorMenu();
+                openArmorMenu(aPlayer);
                 break;
 
             case "Grenade":
-                openGrenadeMenu();
+                openGrenadeMenu(aPlayer);
                 break;
 
             case string myString when myString.StartsWith("Kit"):
@@ -158,51 +146,51 @@ public class GunMenu {
         string myWeaponNameString = anOption.Text;
         PlayerItems myPlayerItems = aPlayer.getPlayerLoadout().getLoadouts(theTeam)[theRoundType.Value];
         myPlayerItems.thePrimaryWeapon = theLoadoutFactory.getLoadoutItem(myWeaponNameString);
-        updateMoney();
+        updateMoney(aPlayer);
     }
 
-    private void openPrimaryMenu() {
-        ChatMenu myChatMenu = new ChatMenu("Select your Primary:");
+    private void openPrimaryMenu(CCSPlayerController aPlayer) {
+        CenterHtmlMenu myChatMenu = new CenterHtmlMenu("Select your Primary:");
         foreach (LoadoutItem myWeapon in theLoadoutFactory.LOADOUT_ITEMS.Where(aWeapon => (aWeapon.theCsTeam == theTeam || aWeapon.theCsTeam == CsTeam.None) && aWeapon.theItemType == ItemType.Primary)) {
             myChatMenu.AddMenuOption(myWeapon.theName, onPrimarySelect);
         }
-        MenuManager.OpenChatMenu(thePlayer, myChatMenu);
+        MenuManager.OpenCenterHtmlMenu(thePlugin, aPlayer, myChatMenu);
     }
 
     private void onSecondarySelect(CCSPlayerController aPlayer, ChatMenuOption anOption) {
         string myWeaponNameString = anOption.Text;
         PlayerItems myPlayerItems = aPlayer.getPlayerLoadout().getLoadouts(theTeam)[theRoundType.Value];
         myPlayerItems.theSecondaryWeapon = theLoadoutFactory.getLoadoutItem(myWeaponNameString);
-        updateMoney();
+        updateMoney(aPlayer);
     }
 
-    private void openSecondaryMenu() {
-        ChatMenu myChatMenu = new ChatMenu("Select your Primary:");
+    private void openSecondaryMenu(CCSPlayerController aPlayer) {
+        CenterHtmlMenu myChatMenu = new CenterHtmlMenu("Select your Primary:");
         foreach (LoadoutItem myWeapon in theLoadoutFactory.LOADOUT_ITEMS.Where(aWeapon => (aWeapon.theCsTeam == theTeam || aWeapon.theCsTeam == CsTeam.None) && aWeapon.theItemType == ItemType.Secondary)) {
             myChatMenu.AddMenuOption(myWeapon.theName, onSecondarySelect);
         }
-        MenuManager.OpenChatMenu(thePlayer, myChatMenu);
+        MenuManager.OpenCenterHtmlMenu(thePlugin, aPlayer, myChatMenu);
     }
 
     private void onArmorSelect(CCSPlayerController aPlayer, ChatMenuOption anOption) {
         string myWeaponNameString = anOption.Text;
         PlayerItems myPlayerItems = aPlayer.getPlayerLoadout().getLoadouts(theTeam)[theRoundType.Value];
         myPlayerItems.theSecondaryWeapon = theLoadoutFactory.getLoadoutItem(myWeaponNameString);
-        updateMoney();
+        updateMoney(aPlayer);
     }
 
-    private void openArmorMenu() {
-        ChatMenu myChatMenu = new ChatMenu("Select your Primary:");
+    private void openArmorMenu(CCSPlayerController aPlayer) {
+        CenterHtmlMenu myChatMenu = new CenterHtmlMenu("Select your Primary:");
         foreach (LoadoutItem myWeapon in theLoadoutFactory.LOADOUT_ITEMS.Where(aWeapon => aWeapon.theItemType == ItemType.Armor)) {
             myChatMenu.AddMenuOption(myWeapon.theName, onPrimarySelect);
         }
-        MenuManager.OpenChatMenu(thePlayer, myChatMenu);
+        MenuManager.OpenCenterHtmlMenu(thePlugin, aPlayer, myChatMenu);
     }
 
     private void onGrenadeSelect(CCSPlayerController aPlayer, ChatMenuOption anOption) {
     }
 
-    private void openGrenadeMenu() {
+    private void openGrenadeMenu(CCSPlayerController aPlayer) {
     }
 
     private void menuTimeout() {

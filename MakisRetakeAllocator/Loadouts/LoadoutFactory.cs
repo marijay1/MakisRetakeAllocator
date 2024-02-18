@@ -7,14 +7,9 @@ using static MakisRetakeAllocator.Loadouts.PlayerLoadout;
 namespace MakisRetakeAllocator.Loadouts;
 
 public class LoadoutFactory {
-    //private Dictionary<CCSPlayerController, PlayerLoadout> theLoadouts;
-
-    //public PlayerLoadout getLoadout(CCSPlayerController aPlayer) {
-    //    return theLoadouts[aPlayer];
-    //}
 
     public PlayerLoadout CreateDefaultLoadout(CCSPlayerController aPlayer) {
-        PlayerLoadout myPlayerLoadout = new PlayerLoadout((int)aPlayer.UserId!, null, null);
+        PlayerLoadout myPlayerLoadout = new PlayerLoadout(aPlayer.SteamID, null, null);
 
         Dictionary<RoundType, PlayerItems> myCounterTerroristLoadout = myPlayerLoadout.getLoadouts(CsTeam.CounterTerrorist);
         Dictionary<RoundType, PlayerItems> myTerroristLoadout = myPlayerLoadout.getLoadouts(CsTeam.Terrorist);
@@ -43,7 +38,7 @@ public class LoadoutFactory {
             false
             ));
 
-        myTerroristLoadout.Add(RoundType.Pistol, new PlayerItems(
+        myTerroristLoadout.Add(RoundType.FullBuy, new PlayerItems(
             getLoadoutItem(CsItem.AK47),
             getLoadoutItem(CsItem.Glock),
             getLoadoutItem(CsItem.KevlarHelmet),
@@ -51,7 +46,7 @@ public class LoadoutFactory {
             false
             ));
 
-        return new PlayerLoadout((int)aPlayer.UserId!, myCounterTerroristLoadout, myTerroristLoadout);
+        return new PlayerLoadout(aPlayer.SteamID, myCounterTerroristLoadout, myTerroristLoadout);
     }
 
     public LoadoutItem getLoadoutItem(CsItem aCsItem) {

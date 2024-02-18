@@ -4,17 +4,17 @@ using MakisRetakeAllocator.Enums;
 namespace MakisRetakeAllocator.Loadouts;
 
 public class PlayerLoadout {
-    private readonly int theSteamId;
+    private readonly ulong theSteamId;
     private Dictionary<RoundType, PlayerItems> theCounterTerroristLoadouts;
     private Dictionary<RoundType, PlayerItems> theTerroristLoadouts;
 
-    public PlayerLoadout(int aSteamId, Dictionary<RoundType, PlayerItems>? aCounterTerroristLoadouts, Dictionary<RoundType, PlayerItems>? aTerroristLoadouts) {
+    public PlayerLoadout(ulong aSteamId, Dictionary<RoundType, PlayerItems>? aCounterTerroristLoadouts, Dictionary<RoundType, PlayerItems>? aTerroristLoadouts) {
         theSteamId = aSteamId;
         theCounterTerroristLoadouts = aCounterTerroristLoadouts ?? new Dictionary<RoundType, PlayerItems>();
         theTerroristLoadouts = aTerroristLoadouts ?? new Dictionary<RoundType, PlayerItems>();
     }
 
-    public int getSteamId() {
+    public ulong getSteamId() {
         return theSteamId;
     }
 

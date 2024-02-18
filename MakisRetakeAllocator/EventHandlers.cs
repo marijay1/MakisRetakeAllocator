@@ -1,22 +1,31 @@
-﻿using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Core.Attributes.Registration;
+﻿using CounterStrikeSharp.API;
+using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Entities;
+using CounterStrikeSharp.API.Modules.Utils;
+using CSPlus.Base.Entities;
+using MakisRetakeAllocator.Enums;
+using MakisRetakeAllocator.Loadouts;
 
 namespace MakisRetakeAllocator;
 
-public partial class EventHandlers {
+public partial class MakisRetakeAllocator {
 
-    [GameEventHandler]
-    public HookResult OnPortItemPurchase(EventItemPurchase @event, GameEventInfo anInfo) {
+    public HookResult OnItemPurchase(EventItemPurchase @event, GameEventInfo anInfo) {
         return HookResult.Continue;
     }
 
-    [GameEventHandler]
     public HookResult OnPlayerSpawn(EventPlayerSpawn @event, GameEventInfo anInfo) {
         return HookResult.Continue;
     }
 
-    [GameEventHandler]
-    public HookResult onPlayerFullConnect(EventPlayerSpawn @event, GameEventInfo anInfo) {
+    private HookResult OnPlayerConnect(EventPlayerConnectFull @event, GameEventInfo anInfo) {
+        CCSPlayerController myPlayer = @event.Userid;
+        ulong mySteamId = myPlayer.SteamID;
+        PlayerLoadout myPlayerLoadout = theDataContext.loadPlayerLoadout(mySteamId);
+        if (!myPlayerLoadout.getLoadouts(CsTeam.CounterTerrorist).Any() || !myPlayerLoadout.getLoadouts(CsTeam.Terrorist).Any()) {
+            myPlayerLoadout = theLoadoutFactory.CreateDefaultLoadout(myPlayer);
+        }
+        myPlayer.setPlayerLoadout(myPlayerLoadout);
         return HookResult.Continue;
     }
 }

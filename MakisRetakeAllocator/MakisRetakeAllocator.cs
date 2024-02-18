@@ -5,15 +5,14 @@ using CounterStrikeSharp.API.Modules.Utils;
 using MakisRetakeAllocator.Configs;
 using MakisRetakeAllocator.Database;
 using MakisRetakeAllocator.Loadouts;
-using McMaster.NETCore.Plugins;
-using Microsoft.Extensions.DependencyInjection;
-using System.Configuration;
 using static MakisRetakeAllocator.Database.DataContext;
 
 namespace MakisRetakeAllocator;
 
 [MinimumApiVersion(167)]
 public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfig> {
+    public static MakisRetakeAllocator thePlugin = null!;
+
     private const string Version = "0.0.1";
 
     public override string ModuleName => "Maki's Retake Allocator";
@@ -29,10 +28,8 @@ public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfi
     public MakisConfig Config { get; set; } = new MakisConfig();
 
     public MakisRetakeAllocator() {
+        thePlugin = this;
         theLoadoutFactory = new LoadoutFactory();
-        DatabaseConfig myDatabaseConfig = Config.theDatabaseConfig;
-        DbSettings myDbSettings = new DbSettings(myDatabaseConfig.theServer, myDatabaseConfig.theDatabase, myDatabaseConfig.theUserId, myDatabaseConfig.thePassword, myDatabaseConfig.thePort);
-        theDataContext = new DataContext(myDbSettings, theLoadoutFactory);
     }
 
     public void OnConfigParsed(MakisConfig aMakiConfig) {
@@ -45,5 +42,13 @@ public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfi
         }
 
         Console.WriteLine($"{LogPrefix}Plugin loaded!");
+
+        DatabaseConfig myDatabaseConfig = Config.theDatabaseConfig;
+        DbSettings myDbSettings = new DbSettings(myDatabaseConfig.theServer, myDatabaseConfig.theDatabase, myDatabaseConfig.theUserId, myDatabaseConfig.thePassword, myDatabaseConfig.thePort);
+        theDataContext = new DataContext(myDbSettings, theLoadoutFactory);
+
+        RegisterEventHandler<EventItemPurchase>(OnItemPurchase);
+        RegisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn);
+        RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect);
     }
 }

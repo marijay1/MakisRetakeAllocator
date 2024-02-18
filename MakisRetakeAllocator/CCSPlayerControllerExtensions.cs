@@ -1,10 +1,5 @@
 ﻿using CounterStrikeSharp.API.Core;
 using MakisRetakeAllocator.Loadouts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSPlus.Base.Entities;
 

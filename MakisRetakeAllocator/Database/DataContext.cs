@@ -2,10 +2,7 @@
 using Dapper;
 using MakisRetakeAllocator.Enums;
 using MakisRetakeAllocator.Loadouts;
-
-using Microsoft.Extensions.Options;
-using MySql.Data.MySqlClient;
-using Mysqlx.Crud;
+using MySqlConnector;
 using static MakisRetakeAllocator.Loadouts.PlayerLoadout;
 
 namespace MakisRetakeAllocator.Database;
@@ -17,27 +14,30 @@ public class DataContext {
     public DataContext(DbSettings aDatabaseSettings, LoadoutFactory aLoadoutFactory) {
         theDatabaseSettings = aDatabaseSettings;
         theLoadoutFactory = aLoadoutFactory;
+
+        initTables();
     }
 
-    public async Task InsertPlayerLoadout(PlayerLoadout aPlayerLoadout) {
+    //TODO USE
+    public void InsertPlayerLoadout(PlayerLoadout aPlayerLoadout) {
         using (var connection = createConnection()) {
-            await connection.OpenAsync();
+            connection.OpenAsync();
 
-            await insertLoadout(aPlayerLoadout, connection, CsTeam.CounterTerrorist, RoundType.Pistol);
-            await insertLoadout(aPlayerLoadout, connection, CsTeam.CounterTerrorist, RoundType.FullBuy);
-            await insertLoadout(aPlayerLoadout, connection, CsTeam.Terrorist, RoundType.Pistol);
-            await insertLoadout(aPlayerLoadout, connection, CsTeam.Terrorist, RoundType.FullBuy);
+            insertLoadout(aPlayerLoadout, connection, CsTeam.CounterTerrorist, RoundType.Pistol);
+            insertLoadout(aPlayerLoadout, connection, CsTeam.CounterTerrorist, RoundType.FullBuy);
+            insertLoadout(aPlayerLoadout, connection, CsTeam.Terrorist, RoundType.Pistol);
+            insertLoadout(aPlayerLoadout, connection, CsTeam.Terrorist, RoundType.FullBuy);
         }
     }
 
-    private async Task insertLoadout(PlayerLoadout aPlayerLoadout, MySqlConnection connection, CsTeam aTeam, RoundType aRoundType) {
+    private void insertLoadout(PlayerLoadout aPlayerLoadout, MySqlConnection connection, CsTeam aTeam, RoundType aRoundType) {
         string tableName = getTableName(aTeam, aRoundType);
 
         string sql = $@"INSERT INTO {tableName} (SteamId, {getColumnNames(aTeam)}) VALUES (@SteamId, {getColumnValues(aPlayerLoadout, aTeam, aRoundType)})";
 
         using (var command = new MySqlCommand(sql, connection)) {
             command.Parameters.AddWithValue("@SteamId", aPlayerLoadout.getSteamId());
-            await command.ExecuteNonQueryAsync();
+            command.ExecuteNonQueryAsync();
         }
     }
 
@@ -60,34 +60,44 @@ public class DataContext {
         return $"'{myPlayerItems.thePrimaryWeapon?.theName}', '{myPlayerItems.theSecondaryWeapon?.theName}', '{myPlayerItems.theArmor?.theName}', '{myGrenades}', {(aTeam == CsTeam.CounterTerrorist ? myPlayerItems.theIsKitEnabled.ToString() : "NULL")}";
     }
 
-    public async Task<PlayerLoadout> loadPlayerLoadout(int aSteamId) {
+    public PlayerLoadout loadPlayerLoadout(ulong aSteamId) {
         using (MySqlConnection myConnection = createConnection()) {
-            await myConnection.OpenAsync();
+            myConnection.OpenAsync();
 
-            Dictionary<RoundType, PlayerItems> myCounterTerroristLoadouts = await loadLoadouts(myConnection, aSteamId, "maki_pistol_weapons", "maki_fullbuy_weapons", "ct");
-            Dictionary<RoundType, PlayerItems> myTerroristLoadouts = await loadLoadouts(myConnection, aSteamId, "maki_pistol_weapons", "maki_fullbuy_weapons", "t");
+            Dictionary<RoundType, PlayerItems> myCounterTerroristLoadouts = loadLoadouts(myConnection, aSteamId, "maki_pistol_weapons", "maki_fullbuy_weapons", "ct");
+            Dictionary<RoundType, PlayerItems> myTerroristLoadouts = loadLoadouts(myConnection, aSteamId, "maki_pistol_weapons", "maki_fullbuy_weapons", "t");
 
             return new PlayerLoadout(aSteamId, myCounterTerroristLoadouts, myTerroristLoadouts);
         }
     }
 
-    private async Task<Dictionary<RoundType, PlayerItems>> loadLoadouts(MySqlConnection aConnection, int aSteamId, string aPistolTable, string aFullbuyTable, string aFieldPrefix) {
-        string mySql = $@"
-        SELECT * FROM {aPistolTable} WHERE SteamId = @SteamId
-        UNION
-        SELECT * FROM {aFullbuyTable} WHERE SteamId = @SteamId
+    private Dictionary<RoundType, PlayerItems> loadLoadouts(MySqlConnection aConnection, ulong aSteamId, string aPistolTable, string aFullbuyTable, string aFieldPrefix) {
+        Dictionary<RoundType, PlayerItems> myLoadouts = new Dictionary<RoundType, PlayerItems>();
+
+        // Load Pistol round type
+        string myPistolSql = $@"
+        SELECT SteamId, {aFieldPrefix}_secondary, {aFieldPrefix}_armor, {aFieldPrefix}_grenades, {aFieldPrefix}_kit FROM {aPistolTable} WHERE SteamId = @SteamId
     ";
+        using (MySqlCommand myPistolCommand = new MySqlCommand(myPistolSql, aConnection)) {
+            myPistolCommand.Parameters.AddWithValue("@SteamId", aSteamId);
+            using (MySqlDataReader pistolReader = myPistolCommand.ExecuteReader()) {
+                while (pistolReader.Read()) {
+                    PlayerItems myPlayerItems = createPlayerItems(pistolReader, aFieldPrefix);
+                    myLoadouts[RoundType.Pistol] = myPlayerItems;
+                }
+            }
+        }
 
-        var myLoadouts = new Dictionary<RoundType, PlayerItems>();
-
-        using (MySqlCommand mySqlCommand = new MySqlCommand(mySql, aConnection)) {
-            mySqlCommand.Parameters.AddWithValue("@SteamId", aSteamId);
-
-            using (MySqlDataReader mySqlReader = mySqlCommand.ExecuteReader()) {
-                while (await mySqlReader.ReadAsync()) {
-                    RoundType myRoundType = mySqlReader.GetString("RoundType") == "Pistol" ? RoundType.Pistol : RoundType.FullBuy;
-                    PlayerItems items = createPlayerItems(mySqlReader, aFieldPrefix);
-                    myLoadouts.Add(myRoundType, items);
+        // Load FullBuy round type
+        string myFullBuySql = $@"
+        SELECT SteamId, {aFieldPrefix}_primary, {aFieldPrefix}_secondary, {aFieldPrefix}_armor, {aFieldPrefix}_grenades, {aFieldPrefix}_kit FROM {aFullbuyTable} WHERE SteamId = @SteamId
+    ";
+        using (MySqlCommand myFullBuyCommand = new MySqlCommand(myFullBuySql, aConnection)) {
+            myFullBuyCommand.Parameters.AddWithValue("@SteamId", aSteamId);
+            using (MySqlDataReader fullBuyReader = myFullBuyCommand.ExecuteReader()) {
+                while (fullBuyReader.Read()) {
+                    PlayerItems myPlayerItems = createPlayerItems(fullBuyReader, aFieldPrefix);
+                    myLoadouts[RoundType.FullBuy] = myPlayerItems;
                 }
             }
         }
@@ -116,42 +126,47 @@ public class DataContext {
     }
 
     private MySqlConnection createConnection() {
-        String myConnectionString = $"Server={theDatabaseSettings.theServer}:{theDatabaseSettings.thePort}; Database={theDatabaseSettings.theDatabase}; Uid={theDatabaseSettings.theUserId}; Pwd={theDatabaseSettings.thePassword}";
+        String myConnectionString = $"Server={theDatabaseSettings.theServer}; Database={theDatabaseSettings.theDatabase}; Uid={theDatabaseSettings.theUserId}; Pwd={theDatabaseSettings.thePassword}; Port={theDatabaseSettings.thePort}";
         return new MySqlConnection(myConnectionString);
     }
 
-    private async Task initTables() {
+    private void initTables() {
         using var myConnection = createConnection();
-        var myPistolSql = """
-                    CREATE TABLE IF NOT EXISTS maki_pistol_weapons (
-                        'SteamId' VARCHAR(64) COLLATE 'utf8mb4_unicode_ci' UNIQUE NOT NULL,
-                        `ct_secondary` VARCHAR(32) NOT NULL,
-                        `ct_armor` VARCHAR(32) NOT NULL,
-                        `ct_grenades` VARCHAR(32) NOT NULL,
-                        `ct_kit` BOOLEAN NOT NULL,
-                        `t_secondary` VARCHAR(32) NOT NULL,
-                        `t_armor` VARCHAR(32) NOT NULL,
-                        `t_grenades` VARCHAR(32) NOT NULL,
-                        UNIQUE ('SteamId')
-                    """;
 
-        var myFullBuySql = """
-                    CREATE TABLE IF NOT EXISTS maki_fullbuy_weapons (
-                        'SteamId' VARCHAR(64) COLLATE 'utf8mb4_unicode_ci' UNIQUE NOT NULL,
-                        'ct_primary' VARCHAR(32),
-                        `ct_secondary` VARCHAR(32) NOT NULL,
-                        `ct_armor` VARCHAR(32) NOT NULL,
-                        `ct_grenades` VARCHAR(32) NOT NULL,
-                        `ct_kit` BOOLEAN NOT NULL,
-                        't_primary' VARCHAR(32),
-                        `t_secondary` VARCHAR(32) NOT NULL,
-                        `t_armor` VARCHAR(32) NOT NULL,
-                        `t_grenades` VARCHAR(32) NOT NULL,
-                        UNIQUE ('SteamId')
-                    """;
+        var myPistolSql = @"
+                CREATE TABLE IF NOT EXISTS maki_pistol_weapons (
+                    `SteamId` VARCHAR(64) COLLATE utf8mb4_unicode_ci UNIQUE NOT NULL,
+                    `ct_secondary` VARCHAR(32) NOT NULL,
+                    `ct_armor` VARCHAR(32) NOT NULL,
+                    `ct_grenades` VARCHAR(32) NOT NULL,
+                    `ct_kit` BOOLEAN NOT NULL,
+                    `t_secondary` VARCHAR(32) NOT NULL,
+                    `t_armor` VARCHAR(32) NOT NULL,
+                    `t_grenades` VARCHAR(32) NOT NULL,
+                    `t_kit` BOOLEAN NULL,
+                    UNIQUE (`SteamId`)
+                );
+                ";
 
-        await myConnection.ExecuteAsync(myPistolSql);
-        await myConnection.ExecuteAsync(myFullBuySql);
+        var myFullBuySql = @"
+                CREATE TABLE IF NOT EXISTS maki_fullbuy_weapons (
+                    `SteamId` VARCHAR(64) COLLATE utf8mb4_unicode_ci UNIQUE NOT NULL,
+                    `ct_primary` VARCHAR(32),
+                    `ct_secondary` VARCHAR(32) NOT NULL,
+                    `ct_armor` VARCHAR(32) NOT NULL,
+                    `ct_grenades` VARCHAR(32) NOT NULL,
+                    `ct_kit` BOOLEAN NOT NULL,
+                    `t_primary` VARCHAR(32),
+                    `t_secondary` VARCHAR(32) NOT NULL,
+                    `t_armor` VARCHAR(32) NOT NULL,
+                    `t_grenades` VARCHAR(32) NOT NULL,
+                    `t_kit` BOOLEAN NULL,
+                    UNIQUE (`SteamId`)
+                );
+                ";
+
+        myConnection.Execute(myPistolSql);
+        myConnection.Execute(myFullBuySql);
     }
 
     public class DbSettings {
