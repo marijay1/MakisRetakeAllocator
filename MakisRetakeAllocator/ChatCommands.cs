@@ -15,7 +15,6 @@ public partial class MakisRetakeAllocator {
         if (aPlayer == null) {
             return;
         }
-        //Open weapons menu for player
     }
 
     [ConsoleCommand("css_awp", "A player trying to get an AWP. Naughty..")]

@@ -30,7 +30,7 @@ public class PlayerLoadout {
         public LoadoutItem theSecondaryWeapon { get; set; }
         public LoadoutItem theArmor { get; set; }
         public List<LoadoutItem> theGrenadePreference { get; set; }
-        public bool? theIsKitEnabled { get; set; }
+        public bool theIsKitEnabled { get; set; }
 
         public PlayerItems(LoadoutItem? aPrimaryWeapon, LoadoutItem aSecondaryWeapon, LoadoutItem aArmor, List<LoadoutItem> aGrenadePreference, bool? anIsKitEnabled) {
             thePrimaryWeapon = aPrimaryWeapon;

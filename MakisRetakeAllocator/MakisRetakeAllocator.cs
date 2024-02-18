@@ -3,10 +3,16 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes;
 using CounterStrikeSharp.API.Modules.Utils;
 using MakisRetakeAllocator.Configs;
+using MakisRetakeAllocator.Database;
+using MakisRetakeAllocator.Loadouts;
+using McMaster.NETCore.Plugins;
+using Microsoft.Extensions.DependencyInjection;
+using System.Configuration;
+using static MakisRetakeAllocator.Database.DataContext;
 
 namespace MakisRetakeAllocator;
 
-[MinimumApiVersion(166)]
+[MinimumApiVersion(167)]
 public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfig> {
     private const string Version = "0.0.1";
 
@@ -18,9 +24,15 @@ public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfi
     public static readonly string LogPrefix = $"[Maki's Retakes Allocator {Version}] ";
     public static readonly string MessagePrefix = $"[{ChatColors.LightPurple}Maki's Retakes{ChatColors.White}] ";
 
-    public MakisConfig Config { get; set; } = null!;
+    private LoadoutFactory theLoadoutFactory;
+    private DataContext theDataContext;
+    public MakisConfig Config { get; set; } = new MakisConfig();
 
     public MakisRetakeAllocator() {
+        theLoadoutFactory = new LoadoutFactory();
+        DatabaseConfig myDatabaseConfig = Config.theDatabaseConfig;
+        DbSettings myDbSettings = new DbSettings(myDatabaseConfig.theServer, myDatabaseConfig.theDatabase, myDatabaseConfig.theUserId, myDatabaseConfig.thePassword, myDatabaseConfig.thePort);
+        theDataContext = new DataContext(myDbSettings, theLoadoutFactory);
     }
 
     public void OnConfigParsed(MakisConfig aMakiConfig) {

@@ -14,8 +14,8 @@ public class DataContext {
     private DbSettings theDatabaseSettings;
     private LoadoutFactory theLoadoutFactory;
 
-    public DataContext(IOptions<DbSettings> aDatabaseSettings, LoadoutFactory aLoadoutFactory) {
-        theDatabaseSettings = aDatabaseSettings.Value;
+    public DataContext(DbSettings aDatabaseSettings, LoadoutFactory aLoadoutFactory) {
+        theDatabaseSettings = aDatabaseSettings;
         theLoadoutFactory = aLoadoutFactory;
     }
 
@@ -159,6 +159,14 @@ public class DataContext {
         public string? theDatabase { get; set; }
         public string? theUserId { get; set; }
         public string? thePassword { get; set; }
-        public int? thePort { get; set; } = 3306;
+        public string? thePort { get; set; }
+
+        public DbSettings(string? aServer, string? aDatabase, string? aUserId, string? aPassword, string? aPort) {
+            theServer = aServer;
+            theDatabase = aDatabase;
+            theUserId = aUserId;
+            thePassword = aPassword;
+            thePort = aPort;
+        }
     }
 }
