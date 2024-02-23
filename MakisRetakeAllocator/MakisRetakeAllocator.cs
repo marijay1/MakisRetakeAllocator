@@ -4,6 +4,7 @@ using CounterStrikeSharp.API.Core.Attributes;
 using CounterStrikeSharp.API.Modules.Utils;
 using MakisRetakeAllocator.Configs;
 using MakisRetakeAllocator.Database;
+using MakisRetakeAllocator.Enums;
 using MakisRetakeAllocator.Loadouts;
 using static MakisRetakeAllocator.Database.DataContext;
 
@@ -22,6 +23,9 @@ public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfi
 
     public static readonly string LogPrefix = $"[Maki's Retakes Allocator {Version}] ";
     public static readonly string MessagePrefix = $"[{ChatColors.LightPurple}Maki's Retakes{ChatColors.White}] ";
+
+    private int theCurrentRound { get; set; }
+    private RoundType theRoundType { get; set; }
 
     private LoadoutFactory theLoadoutFactory;
     private DataContext theDataContext;
@@ -46,9 +50,5 @@ public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfi
         DatabaseConfig myDatabaseConfig = Config.theDatabaseConfig;
         DbSettings myDbSettings = new DbSettings(myDatabaseConfig.theServer, myDatabaseConfig.theDatabase, myDatabaseConfig.theUserId, myDatabaseConfig.thePassword, myDatabaseConfig.thePort);
         theDataContext = new DataContext(myDbSettings, theLoadoutFactory);
-
-        RegisterEventHandler<EventItemPurchase>(OnItemPurchase);
-        RegisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn);
-        RegisterEventHandler<EventPlayerConnectFull>(OnPlayerConnect);
     }
 }

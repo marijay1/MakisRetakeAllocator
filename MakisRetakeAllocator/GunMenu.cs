@@ -3,6 +3,7 @@ using CounterStrikeSharp.API.Modules.Menu;
 using CounterStrikeSharp.API.Modules.Utils;
 using CSPlus.Base.Entities;
 using MakisRetakeAllocator.Configs;
+using MakisRetakeAllocator.Database;
 using MakisRetakeAllocator.Enums;
 using MakisRetakeAllocator.Loadouts;
 using static MakisRetakeAllocator.Loadouts.PlayerLoadout;
@@ -19,11 +20,13 @@ public class GunMenu {
 
     private LoadoutFactory theLoadoutFactory;
     private RetakesConfig theConfig;
+    private DataContext theDataContext;
 
-    public GunMenu(CCSPlayerController aPlayer, CsTeam aTeam, LoadoutFactory aLoadoutFactory, MakisConfig aConfig) {
+    public GunMenu(CCSPlayerController aPlayer, CsTeam aTeam, LoadoutFactory aLoadoutFactory, MakisConfig aConfig, DataContext aDataContext) {
         theTeam = aTeam;
         theLoadoutFactory = aLoadoutFactory;
         theConfig = aConfig.theRetakesConfig;
+        theDataContext = aDataContext;
         theCurrentMoney = 0;
 
         openMenu(aPlayer);
@@ -197,6 +200,6 @@ public class GunMenu {
     }
 
     private void onMenuExit(CCSPlayerController aPlayer, ChatMenuOption anOption) {
-        //closeMenu
+        theDataContext.insertPlayerLoadout(aPlayer.getPlayerLoadout());
     }
 }
