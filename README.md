@@ -57,10 +57,10 @@ A file in the **configs/MakisRetakeAllocator** folder in the **counterstrikeshar
 
 ## Commands
 
-| Command         | Arguments                          | Description                                                                 | Permissions |
-|-----------------|------------------------------------|-----------------------------------------------------------------------------|-------------|
-| css_addspawn    | [T/CT] [A/B] [Y/N (planter spawn)] | Adds a spawn in your current location. This includes where you are looking  | @css/admin  |
-| css_removespawn |                                    | Removes the nearest spawn point                                             | @css/admin  |
+| Command  | Arguments | Description                                   | Permissions |
+|----------|-----------|-----------------------------------------------|-------------|
+| css_guns |           | Opens the menu to configure a players loadout | None        |
+| css_awp  |           | Tells players that awps are not permitted     | None        |
 
 ## Acknowledgements
 
