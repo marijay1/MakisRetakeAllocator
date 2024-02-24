@@ -34,7 +34,7 @@ public static class CCSPlayerControllerExtensions {
 
         CsItem? myPrimary = thePlayerLoadout.getLoadouts(aPlayer.Team)[aRoundType].thePrimaryWeapon.theItem;
         CsItem mySecondary = (CsItem)thePlayerLoadout.getLoadouts(aPlayer.Team)[aRoundType].theSecondaryWeapon.theItem;
-        List<LoadoutItem> myGrenades = thePlayerLoadout.getLoadouts(aPlayer.Team)[aRoundType].theGrenadePreference;
+        List<LoadoutItem> myGrenades = thePlayerLoadout.getLoadouts(aPlayer.Team)[aRoundType].theGrenades;
         CsItem? myArmor = thePlayerLoadout.getLoadouts(aPlayer.Team)[aRoundType].theArmor.theItem;
         bool myIsKitEnabled = thePlayerLoadout.getLoadouts(aPlayer.Team)[aRoundType].theIsKitEnabled;
 

@@ -10,11 +10,9 @@ using static MakisRetakeAllocator.Database.DataContext;
 
 namespace MakisRetakeAllocator;
 
-[MinimumApiVersion(167)]
+[MinimumApiVersion(172)]
 public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfig> {
-    public static MakisRetakeAllocator thePlugin = null!;
-
-    private const string Version = "0.0.1";
+    private const string Version = "1.0.0";
 
     public override string ModuleName => "Maki's Retake Allocator";
     public override string ModuleVersion => Version;
@@ -23,13 +21,14 @@ public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfi
 
     public static readonly string LogPrefix = $"[Maki's Retakes Allocator {Version}] ";
     public static readonly string MessagePrefix = $"[{ChatColors.LightPurple}Maki's Retakes{ChatColors.White}] ";
+    public static MakisRetakeAllocator thePlugin = null!;
 
     private int theCurrentRound { get; set; }
     private RoundType theRoundType { get; set; }
 
+    public MakisConfig Config { get; set; } = new MakisConfig();
     private LoadoutFactory theLoadoutFactory;
     private DataContext theDataContext;
-    public MakisConfig Config { get; set; } = new MakisConfig();
 
     public MakisRetakeAllocator() {
         thePlugin = this;
@@ -41,14 +40,14 @@ public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfi
     }
 
     public override void Load(bool aHotReload) {
+        DatabaseConfig myDatabaseConfig = Config.theDatabaseConfig;
+        DbSettings myDbSettings = new DbSettings(myDatabaseConfig.theServer, myDatabaseConfig.theDatabase, myDatabaseConfig.theUserId, myDatabaseConfig.thePassword, myDatabaseConfig.thePort);
+        theDataContext = new DataContext(myDbSettings, theLoadoutFactory);
+
         if (aHotReload) {
             Server.ExecuteCommand($"map {Server.MapName}");
         }
 
         Console.WriteLine($"{LogPrefix}Plugin loaded!");
-
-        DatabaseConfig myDatabaseConfig = Config.theDatabaseConfig;
-        DbSettings myDbSettings = new DbSettings(myDatabaseConfig.theServer, myDatabaseConfig.theDatabase, myDatabaseConfig.theUserId, myDatabaseConfig.thePassword, myDatabaseConfig.thePort);
-        theDataContext = new DataContext(myDbSettings, theLoadoutFactory);
     }
 }

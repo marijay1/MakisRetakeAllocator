@@ -40,10 +40,8 @@ public partial class MakisRetakeAllocator {
         PlayerLoadout myPlayerLoadout = theDataContext.loadPlayerLoadout(mySteamId);
         if (!myPlayerLoadout.getLoadouts(CsTeam.CounterTerrorist).Any() || !myPlayerLoadout.getLoadouts(CsTeam.Terrorist).Any()) {
             myPlayerLoadout = theLoadoutFactory.CreateDefaultLoadout(myPlayer);
-            myPlayer.PrintToChat("New loadout made");
         }
         myPlayer.setPlayerLoadout(myPlayerLoadout);
-        myPlayer.PrintToChat("Loadout set");
         return HookResult.Continue;
     }
 
@@ -51,7 +49,6 @@ public partial class MakisRetakeAllocator {
     public HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo anInfo) {
         CCSPlayerController myPlayer = @event.Userid;
         theDataContext.insertPlayerLoadout(myPlayer.getPlayerLoadout());
-        Console.WriteLine($"Saving Loadout for {myPlayer}");
 
         return HookResult.Continue;
     }
@@ -60,8 +57,7 @@ public partial class MakisRetakeAllocator {
     public HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo anInfo) {
         theCurrentRound++;
 
-        theRoundType = theCurrentRound > 5 ? RoundType.FullBuy : RoundType.Pistol;
-        Server.PrintToChatAll(theRoundType.ToString());
+        theRoundType = theCurrentRound > Config.theRetakesConfig.theNumPistolRounds ? RoundType.FullBuy : RoundType.Pistol;
 
         return HookResult.Continue;
     }

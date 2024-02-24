@@ -29,14 +29,14 @@ public class PlayerLoadout {
         public LoadoutItem thePrimaryWeapon { get; set; }
         public LoadoutItem theSecondaryWeapon { get; set; }
         public LoadoutItem theArmor { get; set; }
-        public List<LoadoutItem> theGrenadePreference { get; set; }
+        public List<LoadoutItem> theGrenades { get; set; }
         public bool theIsKitEnabled { get; set; }
 
-        public PlayerItems(LoadoutItem aPrimaryWeapon, LoadoutItem aSecondaryWeapon, LoadoutItem aArmor, List<LoadoutItem> aGrenadePreference, bool? anIsKitEnabled) {
+        public PlayerItems(LoadoutItem aPrimaryWeapon, LoadoutItem aSecondaryWeapon, LoadoutItem aArmor, List<LoadoutItem> aGrenades, bool? anIsKitEnabled) {
             thePrimaryWeapon = aPrimaryWeapon;
             theSecondaryWeapon = aSecondaryWeapon;
             theArmor = aArmor;
-            theGrenadePreference = aGrenadePreference;
+            theGrenades = aGrenades;
             theIsKitEnabled = anIsKitEnabled ?? false;
         }
     }

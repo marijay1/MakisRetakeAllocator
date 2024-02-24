@@ -47,11 +47,11 @@ public class DataContext {
             myCommand.Parameters.AddWithValue("@SteamId", aPlayerLoadout.getSteamId());
             myCommand.Parameters.AddWithValue("@CTSecondary", myCTPlayerItems.theSecondaryWeapon.theName);
             myCommand.Parameters.AddWithValue("@CTArmor", myCTPlayerItems.theArmor.theName);
-            myCommand.Parameters.AddWithValue("@CTGrenades", string.Join(",", myCTPlayerItems.theGrenadePreference.Select(aGrenade => aGrenade.theName)));
+            myCommand.Parameters.AddWithValue("@CTGrenades", string.Join(",", myCTPlayerItems.theGrenades.Select(aGrenade => aGrenade.theName)));
             myCommand.Parameters.AddWithValue("@CTKit", myCTPlayerItems.theIsKitEnabled);
             myCommand.Parameters.AddWithValue("@TSecondary", myTPlayerItems.theSecondaryWeapon.theName);
             myCommand.Parameters.AddWithValue("@TArmor", myTPlayerItems.theArmor.theName);
-            myCommand.Parameters.AddWithValue("@TGrenades", string.Join(",", myTPlayerItems.theGrenadePreference.Select(aGrenade => aGrenade.theName)));
+            myCommand.Parameters.AddWithValue("@TGrenades", string.Join(",", myTPlayerItems.theGrenades.Select(aGrenade => aGrenade.theName)));
             myCommand.Parameters.AddWithValue("@TKit", null);
 
             myCommand.ExecuteNonQuery();
@@ -81,12 +81,12 @@ public class DataContext {
             myCommand.Parameters.AddWithValue("@CTPrimary", myCTPlayerItems.thePrimaryWeapon.theName);
             myCommand.Parameters.AddWithValue("@CTSecondary", myCTPlayerItems.theSecondaryWeapon.theName);
             myCommand.Parameters.AddWithValue("@CTArmor", myCTPlayerItems.theArmor.theName);
-            myCommand.Parameters.AddWithValue("@CTGrenades", string.Join(",", myCTPlayerItems.theGrenadePreference.Select(aGrenade => aGrenade.theName)));
+            myCommand.Parameters.AddWithValue("@CTGrenades", string.Join(",", myCTPlayerItems.theGrenades.Select(aGrenade => aGrenade.theName)));
             myCommand.Parameters.AddWithValue("@CTKit", myCTPlayerItems.theIsKitEnabled);
             myCommand.Parameters.AddWithValue("@TPrimary", myTPlayerItems.thePrimaryWeapon.theName);
             myCommand.Parameters.AddWithValue("@TSecondary", myTPlayerItems.theSecondaryWeapon.theName);
             myCommand.Parameters.AddWithValue("@TArmor", myTPlayerItems.theArmor.theName);
-            myCommand.Parameters.AddWithValue("@TGrenades", string.Join(",", myTPlayerItems.theGrenadePreference.Select(aGrenade => aGrenade.theName)));
+            myCommand.Parameters.AddWithValue("@TGrenades", string.Join(",", myTPlayerItems.theGrenades.Select(aGrenade => aGrenade.theName)));
             myCommand.Parameters.AddWithValue("@TKit", null);
 
             myCommand.ExecuteNonQuery();
@@ -105,7 +105,6 @@ public class DataContext {
     private Dictionary<RoundType, PlayerItems> loadLoadouts(MySqlConnection aConnection, ulong aSteamId, string aPistolTable, string aFullbuyTable, string aFieldPrefix) {
         Dictionary<RoundType, PlayerItems> myLoadouts = new Dictionary<RoundType, PlayerItems>();
 
-        // Load Pistol round type
         string myPistolSql = $@"
     SELECT SteamId, {aFieldPrefix}_secondary, {aFieldPrefix}_armor, {aFieldPrefix}_grenades, {aFieldPrefix}_kit FROM {aPistolTable} WHERE SteamId = @SteamId
     ";
@@ -119,7 +118,6 @@ public class DataContext {
             }
         }
 
-        // Load FullBuy round type
         string myFullBuySql = $@"
     SELECT SteamId, {aFieldPrefix}_primary, {aFieldPrefix}_secondary, {aFieldPrefix}_armor, {aFieldPrefix}_grenades, {aFieldPrefix}_kit FROM {aFullbuyTable} WHERE SteamId = @SteamId
     ";
