@@ -48,7 +48,7 @@ A file in the **configs/MakisRetakeAllocator** folder in the **counterstrikeshar
 | Password                      | The Password of the user for the MySQL server                     | password  |
 | Port                          | The Port that is used in your MySQL server                        | 3306      |
 
-| Retakes Config                |                                                                   |           |
+| Retakes Config                | Description                                                       | Default   |
 |-------------------------------|-------------------------------------------------------------------|-----------|
 | NumberOfPistolRounds          | The number of Pistol rounds                                       | 5         |
 | StartingTerroristMoney        | The starting money for Terrorist on a Buy round                   | 4850      |
