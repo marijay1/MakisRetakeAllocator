@@ -48,7 +48,7 @@ A file in the **configs/MakisRetakeAllocator** folder in the **counterstrikeshar
 | Password                      | The Password of the user for the MySQL server                     | password  |
 | Port                          | The Port that is used in your MySQL server                        | 3306      |
 
-| Retakes Config                |                                                                   |           |
+| Retakes Config                | Description                                                       | Default   |
 |-------------------------------|-------------------------------------------------------------------|-----------|
 | NumberOfPistolRounds          | The number of Pistol rounds                                       | 5         |
 | StartingTerroristMoney        | The starting money for Terrorist on a Buy round                   | 4850      |
@@ -57,10 +57,10 @@ A file in the **configs/MakisRetakeAllocator** folder in the **counterstrikeshar
 
 ## Commands
 
-| Command         | Arguments                          | Description                                                                 | Permissions |
-|-----------------|------------------------------------|-----------------------------------------------------------------------------|-------------|
-| css_addspawn    | [T/CT] [A/B] [Y/N (planter spawn)] | Adds a spawn in your current location. This includes where you are looking  | @css/admin  |
-| css_removespawn |                                    | Removes the nearest spawn point                                             | @css/admin  |
+| Command  | Arguments | Description                                   | Permissions |
+|----------|-----------|-----------------------------------------------|-------------|
+| css_guns |           | Opens the menu to configure a players loadout | None        |
+| css_awp  |           | Tells players that awps are not permitted     | None        |
 
 ## Acknowledgements
 
