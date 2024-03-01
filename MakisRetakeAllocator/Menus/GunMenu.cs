@@ -1,6 +1,5 @@
 ﻿using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Entities;
 using CounterStrikeSharp.API.Modules.Menu;
 using CounterStrikeSharp.API.Modules.Utils;
 using CSPlus.Base.Entities;
@@ -8,7 +7,6 @@ using MakisRetakeAllocator.Configs;
 using MakisRetakeAllocator.Database;
 using MakisRetakeAllocator.Enums;
 using MakisRetakeAllocator.Loadouts;
-using System.Numerics;
 using static MakisRetakeAllocator.Loadouts.PlayerLoadout;
 using static MakisRetakeAllocator.MakisRetakeAllocator;
 
