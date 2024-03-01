@@ -51,8 +51,8 @@ A file in the **configs/MakisRetakeAllocator** folder in the **counterstrikeshar
 | Retakes Config                | Description                                                       | Default   |
 |-------------------------------|-------------------------------------------------------------------|-----------|
 | NumberOfPistolRounds          | The number of Pistol rounds                                       | 5         |
-| StartingTerroristMoney        | The starting money for Terrorist on a Buy round                   | 4850      |
-| StartingCounterTerroristMoney | The starting money for Counter-Terrorist on a Buy round           | 4450      |
+| StartingTerroristMoney        | The starting money for Terrorist on a Buy round                   | 4100      |
+| StartingCounterTerroristMoney | The starting money for Counter-Terrorist on a Buy round           | 4150      |
 | SecondsUntilMenuTimeout       | The amount of time without interacting required to close the menu | 30        |
 
 ## Commands
