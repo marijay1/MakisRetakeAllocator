@@ -10,9 +10,9 @@ using static MakisRetakeAllocator.Database.DataContext;
 
 namespace MakisRetakeAllocator;
 
-[MinimumApiVersion(172)]
+[MinimumApiVersion(176)]
 public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfig> {
-    private const string Version = "1.0.0";
+    private const string Version = "1.1.1";
 
     public override string ModuleName => "Maki's Retake Allocator";
     public override string ModuleVersion => Version;
@@ -20,18 +20,18 @@ public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfi
     public override string ModuleDescription => "Main Retake Allocator plugin for Maki's";
 
     public static readonly string LogPrefix = $"[Maki's Retakes Allocator {Version}] ";
-    public static readonly string MessagePrefix = $"[{ChatColors.LightPurple}Maki's Retakes{ChatColors.White}] ";
-    public static MakisRetakeAllocator thePlugin = null!;
+    public static readonly string MessagePrefix = $"[{ChatColors.LightPurple}Maki's Retakes{ChatColors.White}]";
+    public static MakisRetakeAllocator Plugin;
 
-    private int theCurrentRound { get; set; }
-    private RoundType theRoundType { get; set; }
+    private int theCurrentRound;
+    private RoundType theRoundType;
 
     public MakisConfig Config { get; set; } = new MakisConfig();
     private LoadoutFactory theLoadoutFactory;
     private DataContext theDataContext;
 
     public MakisRetakeAllocator() {
-        thePlugin = this;
+        Plugin = this;
         theLoadoutFactory = new LoadoutFactory();
     }
 

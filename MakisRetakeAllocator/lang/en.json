@@ -1,0 +1,7 @@
+{
+  "mr.allocator.menu.guns.TooExpensive": "You need {lightpurple}${0}{white} more!",
+  "mr.allocator.menu.guns.WeaponSelected": "You have selected the {lightpurple}{0}{white}!",
+  "mr.allocator.menu.guns.ExceededGrenades": "You already have {lightpurple}4{white} grenades! Please clear your grenades before picking another one.",
+  "mr.allocator.menu.guns.DuplicateGrenade": "You already have a {lightpurple}{0}{white}!",
+  "mr.allocator.menu.guns.ExceededFlashbangs": "You already have {lightpurple}2{white} Flashbangs!"
+}

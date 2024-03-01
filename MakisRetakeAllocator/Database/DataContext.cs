@@ -176,11 +176,11 @@ public class DataContext {
                     `SteamId` VARCHAR(64) COLLATE utf8mb4_unicode_ci UNIQUE NOT NULL,
                     `ct_secondary` VARCHAR(32) NOT NULL,
                     `ct_armor` VARCHAR(32) NOT NULL,
-                    `ct_grenades` VARCHAR(32) NOT NULL,
+                    `ct_grenades` VARCHAR(128) NOT NULL,
                     `ct_kit` BOOLEAN NOT NULL,
                     `t_secondary` VARCHAR(32) NOT NULL,
                     `t_armor` VARCHAR(32) NOT NULL,
-                    `t_grenades` VARCHAR(32) NOT NULL,
+                    `t_grenades` VARCHAR(128) NOT NULL,
                     `t_kit` BOOLEAN NULL,
                     UNIQUE (`SteamId`)
                 );
@@ -192,12 +192,12 @@ public class DataContext {
                     `ct_primary` VARCHAR(32),
                     `ct_secondary` VARCHAR(32) NOT NULL,
                     `ct_armor` VARCHAR(32) NOT NULL,
-                    `ct_grenades` VARCHAR(32) NOT NULL,
+                    `ct_grenades` VARCHAR(128) NOT NULL,
                     `ct_kit` BOOLEAN NOT NULL,
                     `t_primary` VARCHAR(32),
                     `t_secondary` VARCHAR(32) NOT NULL,
                     `t_armor` VARCHAR(32) NOT NULL,
-                    `t_grenades` VARCHAR(32) NOT NULL,
+                    `t_grenades` VARCHAR(128) NOT NULL,
                     `t_kit` BOOLEAN NULL,
                     UNIQUE (`SteamId`)
                 );
