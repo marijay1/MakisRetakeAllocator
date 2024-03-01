@@ -10,9 +10,9 @@ using static MakisRetakeAllocator.Database.DataContext;
 
 namespace MakisRetakeAllocator;
 
-[MinimumApiVersion(176)]
+[MinimumApiVersion(178)]
 public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfig> {
-    private const string Version = "1.1.1";
+    private const string Version = "1.2.0";
 
     public override string ModuleName => "Maki's Retake Allocator";
     public override string ModuleVersion => Version;
