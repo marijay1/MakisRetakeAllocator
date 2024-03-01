@@ -20,11 +20,11 @@ This plugin was created for my own server, so I will not go out of my way to add
 
 - [ ] Randomize loadout
 
-- [ ] Translations
+- [x] Translations
 
 - [ ] Icons in the Gun menu
 
-- [ ] Economy in the menu to simulate a regular buy round
+- [x] Economy in the menu to simulate a regular buy round
 
 - [ ] Add better feedback to the player/admin
 
