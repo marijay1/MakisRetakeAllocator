@@ -59,8 +59,8 @@ A file in the **configs/MakisRetakeAllocator** folder in the **counterstrikeshar
 
 | Command  | Arguments | Description                                   | Permissions |
 |----------|-----------|-----------------------------------------------|-------------|
-| css_guns |           | Opens the menu to configure a players loadout | None        |
-| css_awp  |           | Tells players that awps are not permitted     | None        |
+| css_guns |           | Opens the menu to configure a players loadout | N/A         |
+| css_awp  |           | Tells players that awps are not permitted     | N/A         |
 
 ## Acknowledgements
 
