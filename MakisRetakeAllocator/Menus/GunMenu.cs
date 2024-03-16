@@ -18,13 +18,13 @@ public class GunMenu {
 
     private LoadoutFactory theLoadoutFactory;
     private RetakesConfig theRetakesConfig;
-    private PlayerLoadoutContext theDataContext;
+    private PlayerLoadoutContext thePlayerLoadoutContext;
 
-    public GunMenu(CCSPlayerController aPlayer, CsTeam aTeam, LoadoutFactory aLoadoutFactory, MakisConfig aConfig, PlayerLoadoutContext aDataContext) {
+    public GunMenu(CCSPlayerController aPlayer, CsTeam aTeam, LoadoutFactory aLoadoutFactory, MakisConfig aConfig, PlayerLoadoutContext aPlayerLoadoutContext) {
         theTeam = aTeam;
         theLoadoutFactory = aLoadoutFactory;
         theRetakesConfig = aConfig.theRetakesConfig;
-        theDataContext = aDataContext;
+        thePlayerLoadoutContext = aPlayerLoadoutContext;
 
         openMenu(aPlayer);
     }
@@ -237,7 +237,7 @@ public class GunMenu {
     }
 
     private void onMenuExit(CCSPlayerController aPlayer, ChatMenuOption anOption) {
-        //save to memory not the database
+        //Closes
     }
 
     private void menuTimeout() {

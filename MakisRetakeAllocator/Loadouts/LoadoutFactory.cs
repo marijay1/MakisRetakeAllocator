@@ -8,45 +8,19 @@ namespace MakisRetakeAllocator.Loadouts;
 
 public class LoadoutFactory {
 
-    public PlayerLoadout CreateDefaultLoadout(CCSPlayerController aPlayer) {
-        PlayerLoadout myPlayerLoadout = new PlayerLoadout(aPlayer.SteamID, null, null);
+    public PlayerItems createDefaultItems(CsTeam aTeam, RoundType aRoundType) {
+        Dictionary<(CsTeam, RoundType), (LoadoutItem primaryWeapon, LoadoutItem secondaryWeapon, LoadoutItem armor, bool isKitEnabled)> myDefaultLoadouts = new Dictionary<(CsTeam, RoundType), (LoadoutItem, LoadoutItem, LoadoutItem, bool)> {
+            { (CsTeam.CounterTerrorist, RoundType.Pistol), (getLoadoutItem("No Weapon"), getLoadoutItem(CsItem.USP), getLoadoutItem(CsItem.Kevlar), false) },
+            { (CsTeam.CounterTerrorist, RoundType.FullBuy), (getLoadoutItem(CsItem.M4A1S), getLoadoutItem(CsItem.USP), getLoadoutItem(CsItem.KevlarHelmet), true) },
+            { (CsTeam.Terrorist, RoundType.Pistol), (getLoadoutItem("No Weapon"), getLoadoutItem(CsItem.Glock), getLoadoutItem(CsItem.Kevlar), false) },
+            { (CsTeam.Terrorist, RoundType.FullBuy), (getLoadoutItem(CsItem.AK47), getLoadoutItem(CsItem.Glock), getLoadoutItem(CsItem.KevlarHelmet), false) }
+        };
 
-        Dictionary<RoundType, PlayerItems> myCounterTerroristLoadout = myPlayerLoadout.getLoadouts(CsTeam.CounterTerrorist);
-        Dictionary<RoundType, PlayerItems> myTerroristLoadout = myPlayerLoadout.getLoadouts(CsTeam.Terrorist);
-
-        myCounterTerroristLoadout.Add(RoundType.Pistol, new PlayerItems(
-            getLoadoutItem("No Weapon"),
-            getLoadoutItem(CsItem.USP),
-            getLoadoutItem(CsItem.Kevlar),
-            new List<LoadoutItem>(),
-            false
-            ));
-
-        myCounterTerroristLoadout.Add(RoundType.FullBuy, new PlayerItems(
-            getLoadoutItem(CsItem.M4A1S),
-            getLoadoutItem(CsItem.USP),
-            getLoadoutItem(CsItem.KevlarHelmet),
-            new List<LoadoutItem>(),
-            true
-            ));
-
-        myTerroristLoadout.Add(RoundType.Pistol, new PlayerItems(
-            getLoadoutItem("No Weapon"),
-            getLoadoutItem(CsItem.Glock),
-            getLoadoutItem(CsItem.Kevlar),
-            new List<LoadoutItem>(),
-            false
-            ));
-
-        myTerroristLoadout.Add(RoundType.FullBuy, new PlayerItems(
-            getLoadoutItem(CsItem.AK47),
-            getLoadoutItem(CsItem.Glock),
-            getLoadoutItem(CsItem.KevlarHelmet),
-            new List<LoadoutItem>(),
-            false
-            ));
-
-        return new PlayerLoadout(aPlayer.SteamID, myCounterTerroristLoadout, myTerroristLoadout);
+        if (myDefaultLoadouts.TryGetValue((aTeam, aRoundType), out var myDefaultLoadout)) {
+            return new PlayerItems(myDefaultLoadout.primaryWeapon, myDefaultLoadout.secondaryWeapon, myDefaultLoadout.armor, new List<LoadoutItem>(), myDefaultLoadout.isKitEnabled);
+        } else {
+            throw new ArgumentException("Unsupported team-round type combination");
+        }
     }
 
     public LoadoutItem getLoadoutItem(CsItem aCsItem) {

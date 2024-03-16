@@ -14,7 +14,7 @@ public class PlayerLoadoutContext {
     public PlayerLoadoutContext(SqlDataAccess aSqlDataAccess, LoadoutFactory aLoadoutFactory) {
         theSqlDataAccess = aSqlDataAccess;
         theLoadoutFactory = aLoadoutFactory;
-        Task.Run(async () => await initTablesAsync());
+        Server.NextFrameAsync(async () => await initTablesAsync());
     }
 
     public async Task<PlayerLoadout> getLoadoutAsync(ulong aSteamId) {
@@ -36,37 +36,41 @@ public class PlayerLoadoutContext {
     }
 
     private async Task<PlayerItems> getPlayerItemsAsync(CsTeam aTeam, RoundType aRoundType, ulong aSteamId) {
-        string myResourceName = aRoundType.Equals(RoundType.Pistol) ? "p_GetUserItems" : "fb_GetUserItems";
+        string myResourceName = aRoundType.Equals(RoundType.Pistol) ? "p_GetUserItems.sql" : "fb_GetUserItems.sql";
         string mySql = theSqlDataAccess.readEmbeddedSqlProcedure(myResourceName);
 
         return await theSqlDataAccess.loadDataAsync<PlayerItems, dynamic, CsTeam, RoundType>(
             mySql,
             new { SteamId = aSteamId },
-            MapToPlayerItems,
+            mapToPlayerItems,
             aTeam,
             aRoundType);
     }
 
-    private PlayerItems MapToPlayerItems(IDataReader myReader, CsTeam aTeam, RoundType aRoundType) {
+    private PlayerItems mapToPlayerItems(IDataReader myReader, CsTeam aTeam, RoundType aRoundType) {
         string myRowPrefix = aTeam.Equals(CsTeam.Terrorist) ? "t" : "ct";
 
-        LoadoutItem myPrimaryWeapon = theLoadoutFactory.getLoadoutItem("No Weapon");
-        if (aRoundType.Equals(RoundType.FullBuy)) {
-            myPrimaryWeapon = theLoadoutFactory.getLoadoutItem(myReader[$"{myRowPrefix}_primary"].ToString());
+        if (myReader.Read()) {
+            LoadoutItem myPrimaryWeapon = theLoadoutFactory.getLoadoutItem("No Weapon");
+            if (aRoundType.Equals(RoundType.FullBuy)) {
+                myPrimaryWeapon = theLoadoutFactory.getLoadoutItem(myReader[$"{myRowPrefix}_primary"].ToString());
+            }
+
+            LoadoutItem mySecondaryWeapon = theLoadoutFactory.getLoadoutItem(myReader[$"{myRowPrefix}_secondary"].ToString());
+            LoadoutItem myArmor = theLoadoutFactory.getLoadoutItem(myReader[$"{myRowPrefix}_armor"].ToString());
+
+            List<LoadoutItem> myGrenades = new List<LoadoutItem>();
+            string[] myGrenadesString = myReader[$"{myRowPrefix}_grenades"].ToString().Split(',');
+            foreach (string myGrenadeString in myGrenadesString) {
+                myGrenades.Add(theLoadoutFactory.getLoadoutItem(myGrenadeString));
+            }
+
+            bool? myIsKitEnabled = Convert.ToBoolean(myReader[$"{myRowPrefix}_kit"]);
+
+            return new PlayerItems(myPrimaryWeapon, mySecondaryWeapon, myArmor, myGrenades, myIsKitEnabled);
+        } else {
+            return theLoadoutFactory.createDefaultItems(aTeam, aRoundType);
         }
-
-        LoadoutItem mySecondaryWeapon = theLoadoutFactory.getLoadoutItem(myReader[$"{myRowPrefix}_secondary"].ToString());
-        LoadoutItem myArmor = theLoadoutFactory.getLoadoutItem(myReader[$"{myRowPrefix}_armor"].ToString());
-
-        List<LoadoutItem> myGrenades = new List<LoadoutItem>();
-        string[] myGrenadesString = myReader[$"{myRowPrefix}_grenades"].ToString().Split(',');
-        foreach (string myGrenadeString in myGrenadesString) {
-            myGrenades.Add(theLoadoutFactory.getLoadoutItem(myGrenadeString));
-        }
-
-        bool? myIsKitEnabled = Convert.ToBoolean(myReader[$"{myRowPrefix}_kit"]);
-
-        return new PlayerItems(myPrimaryWeapon, mySecondaryWeapon, myArmor, myGrenades, myIsKitEnabled);
     }
 
     public async Task upsertLoadoutAsync(ulong aSteamId, PlayerLoadout aLoadout) {
@@ -76,7 +80,7 @@ public class PlayerLoadoutContext {
     }
 
     private async Task upsertTeamLoadoutAsync(ulong aSteamId, RoundType aRoundType, PlayerLoadout aLoadout) {
-        string myResourceName = aRoundType.Equals(RoundType.Pistol) ? "p_UpsertUserItems" : "fb_UpsertUserItems";
+        string myResourceName = aRoundType.Equals(RoundType.Pistol) ? "p_UpsertUserItems.sql" : "fb_UpsertUserItems.sql";
         string mySql = theSqlDataAccess.readEmbeddedSqlProcedure(myResourceName);
 
         PlayerItems myCounterTerroristItems = aLoadout.getLoadouts(CsTeam.CounterTerrorist)[aRoundType];

@@ -36,14 +36,7 @@ public partial class MakisRetakeAllocator {
     public HookResult OnPlayerConnect(EventPlayerConnectFull @event, GameEventInfo anInfo) {
         CCSPlayerController myPlayer = @event.Userid;
         ulong mySteamId = myPlayer.getSteamId64();
-        PlayerLoadout myPlayerLoadout;
-        Task.Run(async () => {
-            myPlayerLoadout = await thePlayerLoadoutContext.getLoadoutAsync(mySteamId);
-            if (!myPlayerLoadout.getLoadouts(CsTeam.CounterTerrorist).Any() || !myPlayerLoadout.getLoadouts(CsTeam.Terrorist).Any()) {
-                myPlayerLoadout = theLoadoutFactory.CreateDefaultLoadout(myPlayer);
-            }
-            myPlayer.setPlayerLoadout(myPlayerLoadout);
-        });
+        Server.NextFrameAsync(async () => myPlayer.setPlayerLoadout(await thePlayerLoadoutContext.getLoadoutAsync(mySteamId)));
 
         return HookResult.Continue;
     }
@@ -52,7 +45,7 @@ public partial class MakisRetakeAllocator {
     public HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo anInfo) {
         CCSPlayerController myPlayer = @event.Userid;
         ulong mySteamId = myPlayer.getSteamId64();
-        Task.Run(async () => await thePlayerLoadoutContext.upsertLoadoutAsync(mySteamId, myPlayer.getPlayerLoadout()));
+        _ = thePlayerLoadoutContext.upsertLoadoutAsync(mySteamId, myPlayer.getPlayerLoadout());
 
         return HookResult.Continue;
     }

@@ -58,7 +58,7 @@ public static class CCSPlayerControllerExtensions {
         }
 
         if (myIsKitEnabled) {
-            CCSPlayer_ItemServices myItemServices = new CCSPlayer_ItemServices(aPlayer.PlayerPawn.Value!.ItemServices!.Handle) {
+            new CCSPlayer_ItemServices(aPlayer.PlayerPawn.Value!.ItemServices!.Handle) {
                 HasDefuser = true
             };
         }
