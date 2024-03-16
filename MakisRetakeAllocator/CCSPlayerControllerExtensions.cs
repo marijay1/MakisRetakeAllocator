@@ -21,9 +21,13 @@ public static class CCSPlayerControllerExtensions {
             return;
         }
 
-        CCSPlayer_ItemServices itemServices = new CCSPlayer_ItemServices(aPlayer.PlayerPawn.Value.ItemServices.Handle);
-        itemServices.HasHelmet = false;
-        itemServices.HasHeavyArmor = false;
+        CCSPlayer_ItemServices myItemServices = new CCSPlayer_ItemServices(aPlayer.PlayerPawn.Value.ItemServices.Handle);
+        myItemServices.HasHelmet = false;
+        myItemServices.HasHeavyArmor = false;
+    }
+
+    public static ulong getSteamId64(this CCSPlayerController aPlayer) {
+        return aPlayer.AuthorizedSteamID?.SteamId64 ?? 0;
     }
 
     public static void allocateItems(this CCSPlayerController aPlayer, RoundType aRoundType) {
@@ -31,8 +35,8 @@ public static class CCSPlayerControllerExtensions {
             return;
         }
 
-        CsItem? myPrimary = thePlayerLoadout.getLoadouts(aPlayer.Team)[aRoundType].thePrimaryWeapon.theItem;
-        CsItem mySecondary = (CsItem)thePlayerLoadout.getLoadouts(aPlayer.Team)[aRoundType].theSecondaryWeapon.theItem;
+        CsItem? myPrimary = thePlayerLoadout!.getLoadouts(aPlayer.Team)[aRoundType].thePrimaryWeapon.theItem;
+        CsItem mySecondary = (CsItem)thePlayerLoadout.getLoadouts(aPlayer.Team)[aRoundType].theSecondaryWeapon.theItem!;
         List<LoadoutItem> myGrenades = thePlayerLoadout.getLoadouts(aPlayer.Team)[aRoundType].theGrenades;
         CsItem? myArmor = thePlayerLoadout.getLoadouts(aPlayer.Team)[aRoundType].theArmor.theItem;
         bool myIsKitEnabled = thePlayerLoadout.getLoadouts(aPlayer.Team)[aRoundType].theIsKitEnabled;
@@ -45,7 +49,7 @@ public static class CCSPlayerControllerExtensions {
 
         if (myGrenades.Count != 0) {
             foreach (LoadoutItem myGrenade in myGrenades) {
-                aPlayer.GiveNamedItem((CsItem)myGrenade.theItem);
+                aPlayer.GiveNamedItem((CsItem)myGrenade.theItem!);
             }
         }
 
@@ -54,7 +58,7 @@ public static class CCSPlayerControllerExtensions {
         }
 
         if (myIsKitEnabled) {
-            CCSPlayer_ItemServices myItemServices = new CCSPlayer_ItemServices(aPlayer.PlayerPawn.Value.ItemServices.Handle) {
+            CCSPlayer_ItemServices myItemServices = new CCSPlayer_ItemServices(aPlayer.PlayerPawn.Value!.ItemServices!.Handle) {
                 HasDefuser = true
             };
         }

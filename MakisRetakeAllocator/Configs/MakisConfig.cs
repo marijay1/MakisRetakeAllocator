@@ -13,7 +13,6 @@ public class DatabaseConfig {
     [JsonPropertyName("Database")] public string theDatabase { get; set; } = "database";
     [JsonPropertyName("Username")] public string theUserId { get; set; } = "username";
     [JsonPropertyName("Password")] public string thePassword { get; set; } = "password";
-    [JsonPropertyName("Port")] public string thePort { get; set; } = "3306";
 }
 
 public class RetakesConfig {

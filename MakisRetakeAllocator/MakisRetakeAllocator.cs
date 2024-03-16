@@ -6,7 +6,6 @@ using MakisRetakeAllocator.Configs;
 using MakisRetakeAllocator.Database;
 using MakisRetakeAllocator.Enums;
 using MakisRetakeAllocator.Loadouts;
-using static MakisRetakeAllocator.Database.DataContext;
 
 namespace MakisRetakeAllocator;
 
@@ -28,11 +27,10 @@ public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfi
 
     public MakisConfig Config { get; set; } = new MakisConfig();
     private LoadoutFactory theLoadoutFactory;
-    private DataContext theDataContext;
+    private PlayerLoadoutContext thePlayerLoadoutContext;
 
     public MakisRetakeAllocator() {
         Plugin = this;
-        theLoadoutFactory = new LoadoutFactory();
     }
 
     public void OnConfigParsed(MakisConfig aMakiConfig) {
@@ -41,8 +39,9 @@ public partial class MakisRetakeAllocator : BasePlugin, IPluginConfig<MakisConfi
 
     public override void Load(bool aHotReload) {
         DatabaseConfig myDatabaseConfig = Config.theDatabaseConfig;
-        DbSettings myDbSettings = new DbSettings(myDatabaseConfig.theServer, myDatabaseConfig.theDatabase, myDatabaseConfig.theUserId, myDatabaseConfig.thePassword, myDatabaseConfig.thePort);
-        theDataContext = new DataContext(myDbSettings, theLoadoutFactory);
+        theLoadoutFactory = new LoadoutFactory();
+        SqlDataAccess mySqlDataAccess = new SqlDataAccess(myDatabaseConfig);
+        thePlayerLoadoutContext = new PlayerLoadoutContext(mySqlDataAccess, theLoadoutFactory);
 
         if (aHotReload) {
             Server.ExecuteCommand($"map {Server.MapName}");

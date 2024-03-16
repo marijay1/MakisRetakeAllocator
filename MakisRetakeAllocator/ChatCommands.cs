@@ -16,7 +16,7 @@ public partial class MakisRetakeAllocator {
         if (aPlayer == null) {
             return;
         }
-        new GunMenu(aPlayer, aPlayer.Team, theLoadoutFactory, Config, theDataContext);
+        new GunMenu(aPlayer, aPlayer.Team, theLoadoutFactory, Config, thePlayerLoadoutContext);
     }
 
     [ConsoleCommand("css_awp", "A player trying to get an AWP. Naughty..")]

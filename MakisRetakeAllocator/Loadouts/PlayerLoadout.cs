@@ -1,9 +1,7 @@
 ﻿using CounterStrikeSharp.API.Core;
+using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Utils;
 using MakisRetakeAllocator.Enums;
-using CounterStrikeSharp.API.Modules.Entities.Constants;
-using System.Collections.Generic;
-using CounterStrikeSharp.API;
 
 namespace MakisRetakeAllocator.Loadouts;
 
@@ -24,10 +22,7 @@ public class PlayerLoadout {
     }
 
     public Dictionary<RoundType, PlayerItems> getLoadouts(CsTeam aTeam) {
-        if (aTeam == CsTeam.CounterTerrorist) {
-            return theCounterTerroristLoadouts;
-        }
-        return theTerroristLoadouts;
+        return aTeam == CsTeam.CounterTerrorist ? theCounterTerroristLoadouts : theTerroristLoadouts;
     }
 
     public int getLoadoutCost(CsTeam aTeam, RoundType aRoundType) {
@@ -99,7 +94,7 @@ public class PlayerLoadout {
         return aGrenades.Count(aGrenade => aGrenade.theItem == CsItem.Flashbang);
     }
 
-    public record PlayerItems {
+    public class PlayerItems {
         public LoadoutItem thePrimaryWeapon { get; set; }
         public LoadoutItem theSecondaryWeapon { get; set; }
         public LoadoutItem theArmor { get; set; }
