@@ -46,7 +46,6 @@ A file in the **configs/MakisRetakeAllocator** folder in the **counterstrikeshar
 | Database                      | The Database name for the MySQL server                            | database  |
 | Username                      | The Username of the user for the MySQL server                     | username  |
 | Password                      | The Password of the user for the MySQL server                     | password  |
-| Port                          | The Port that is used in your MySQL server                        | 3306      |
 
 | Retakes Config                | Description                                                       | Default   |
 |-------------------------------|-------------------------------------------------------------------|-----------|
